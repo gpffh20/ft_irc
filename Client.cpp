@@ -17,8 +17,7 @@ int main() {
   }
 
   // Set socket to non-blocking mode
-  int flags = fcntl(clientSocket, F_GETFL, 0);
-  fcntl(clientSocket, F_SETFL, flags | O_NONBLOCK);
+  fcntl(clientSocket, F_SETFL, O_NONBLOCK);
 
   // Connect to server
   sockaddr_in serverAddr;

@@ -17,8 +17,7 @@ int main() {
   }
 
   // Set socket to non-blocking mode
-  int flags = fcntl(serverSocket, F_GETFL, 0);
-  fcntl(serverSocket, F_SETFL, flags | O_NONBLOCK);
+  fcntl(serverSocket, F_SETFL, O_NONBLOCK);
 
   // Bind the socket to an IP address and port
   sockaddr_in serverAddr;
@@ -82,8 +81,7 @@ int main() {
                       << inet_ntoa(clientAddr.sin_addr) << ":"
                       << ntohs(clientAddr.sin_port) << "\n";
             // Set client socket to non-blocking mode
-            flags = fcntl(clientSocket, F_GETFL, 0);
-            fcntl(clientSocket, F_SETFL, flags | O_NONBLOCK);
+            fcntl(clientSocket, F_SETFL, O_NONBLOCK);
             // Register the client socket for read events
             EV_SET(&change, clientSocket, EVFILT_READ, EV_ADD, 0, 0, NULL);
             if (kevent(kq, &change, 1, NULL, 0, NULL) == -1) {
