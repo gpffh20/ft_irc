@@ -9,6 +9,7 @@
 #include <arpa/inet.h>
 
 IRCServer::IRCServer(int port) {
+    std::cout << BOOTUP_MSG1 << BOOTUP_MSG2 << BOOTUP_MSG3 << BOOTUP_MSG4 << BOOTUP_MSG5 << BOOTUP_MSG6 << std::endl;
     serverSocket = socket(AF_INET, SOCK_STREAM, 0);
     if (serverSocket == -1) {
         throw std::runtime_error("Failed to create socket");
@@ -95,7 +96,7 @@ void IRCServer::handleNewConnection() {
             close(clientSocket);
         } else {
             clients[clientSocket] = ClientInfo();
-            std::string welcomeMessage = ":server 001 * :Welcome to the IRC server\r\n";
+            std::string welcomeMessage = ":server 001 * :Welcome to the NO ANSWER IRC server\r\n";
             send(clientSocket, welcomeMessage.c_str(), welcomeMessage.size(), 0);
         }
     }
@@ -158,6 +159,13 @@ void IRCServer::handleClientMessage(int clientSocket) {
 
             std::string fullMsg = ":" + clientInfo.nickname + " PRIVMSG " + channel + " :" + msg + "\r\n";
             broadcastMessage(fullMsg, clientSocket, channel);
+        }
+        // handle QUIT command
+        else if (command == "QUIT") {
+            std::string quitMessage;
+            std::getline(iss, quitMessage);
+            closeClientConnection(clientSocket);
+            std::cout << clientInfo.nickname << " has quit (" << quitMessage << ")" << std::endl;
         }
     }
 }
