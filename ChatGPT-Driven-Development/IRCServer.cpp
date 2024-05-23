@@ -4,6 +4,7 @@
 #include <sstream>
 
 IRCServer::IRCServer(int port) {
+  std::cout << BOOTUP_MSG1 << BOOTUP_MSG2 << BOOTUP_MSG3 << BOOTUP_MSG4 << BOOTUP_MSG5 << BOOTUP_MSG6;
   serverSocket = socket(AF_INET, SOCK_STREAM, 0);
   if (serverSocket == -1) {
     throw std::runtime_error("Failed to create socket");
