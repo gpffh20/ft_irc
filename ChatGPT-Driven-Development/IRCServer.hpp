@@ -21,7 +21,7 @@ private:
     int serverSocket;
     int kq;
     std::map<int, ClientInfo> clients;
-    std::map<std::string, std::vector<int>> channels;
+    std::map<std::string, std::vector<int> > channels;
 
     void handleNewConnection();
     void handleClientMessage(int clientSocket);

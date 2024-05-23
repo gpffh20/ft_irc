@@ -115,54 +115,49 @@ void IRCServer::handleClientMessage(int clientSocket) {
         std::string command;
         iss >> command;
 
-        if (clientInfo.nickname.empty() || clientInfo.username.empty()) {
-            // NICK과 USER 명령을 기대합니다.
-            if (command == "NICK") {
-                std::string nickname;
-                iss >> nickname;
-                clientInfo.nickname = nickname;
-                std::cout << "Client set nickname: " << clientInfo.nickname << std::endl;
-                if (!clientInfo.username.empty()) {
-                    std::string welcomeMessage = ":server 001 " + clientInfo.nickname + " :Welcome to the IRC server\r\n";
-                    send(clientSocket, welcomeMessage.c_str(), welcomeMessage.size(), 0);
-                }
-            } else if (command == "USER") {
-                std::string username, hostname, servername, realname;
-                iss >> username >> hostname >> servername;
-                std::getline(iss, realname);
-                if (!username.empty() && !hostname.empty() && !servername.empty() && !realname.empty()) {
-                    clientInfo.username = username;
-                    std::cout << "Client set username: " << clientInfo.username << std::endl;
-                    if (!clientInfo.nickname.empty()) {
-                        std::string welcomeMessage = ":server 001 " + clientInfo.nickname + " :Welcome to the IRC server\r\n";
-                        send(clientSocket, welcomeMessage.c_str(), welcomeMessage.size(), 0);
-                    }
-                }
-            } else {
-                std::cerr << "Error: Expected NICK or USER command" << std::endl;
+        // Process NICK command
+        if (command == "NICK") {
+            std::string nickname;
+            iss >> nickname;
+            clientInfo.nickname = nickname;
+            std::cout << "Client set nickname: " << clientInfo.nickname << std::endl;
+            std::string welcomeMessage = ":server 001 " + clientInfo.nickname + " :Welcome to the IRC server\r\n";
+            send(clientSocket, welcomeMessage.c_str(), welcomeMessage.size(), 0);
+        } 
+        // Process USER command
+        else if (command == "USER") {
+            std::string username, hostname, servername, realname;
+            iss >> username >> hostname >> servername;
+            std::getline(iss, realname);
+            if (!username.empty() && !hostname.empty() && !servername.empty() && !realname.empty()) {
+                clientInfo.username = username;
+                std::cout << "Client set username: " << clientInfo.username << std::endl;
+                std::string welcomeMessage = ":server 001 " + clientInfo.nickname + " :Welcome to the IRC server\r\n";
+                send(clientSocket, welcomeMessage.c_str(), welcomeMessage.size(), 0);
             }
-        } else {
-            // 채널 메시지를 처리합니다.
-            if (command == "JOIN") {
-                std::string channel;
-                iss >> channel;
-                channels[channel].push_back(clientSocket);
-                std::cout << clientInfo.nickname << " joined channel: " << channel << std::endl;
-                std::string joinMessage = ":" + clientInfo.nickname + " JOIN " + channel + "\r\n";
-                broadcastMessage(joinMessage, clientSocket, channel);
-            } else if (command == "PRIVMSG") {
-                std::string channel;
-                iss >> channel;
-                std::string msg;
-                std::getline(iss, msg);
-                if (!msg.empty() && msg[0] == ' ') {
-                    msg = msg.substr(1);
-                }
-                std::cout << clientInfo.nickname << " in " << channel << " says: " << msg << std::endl;
+        } 
+        // Process JOIN command
+        else if (command == "JOIN") {
+            std::string channel;
+            iss >> channel;
+            channels[channel].push_back(clientSocket);
+            std::cout << clientInfo.nickname << " joined channel: " << channel << std::endl;
+            std::string joinMessage = ":" + clientInfo.nickname + " JOIN " + channel + "\r\n";
+            broadcastMessage(joinMessage, clientSocket, channel);
+        } 
+        // Process PRIVMSG command
+        else if (command == "PRIVMSG") {
+            std::string channel;
+            iss >> channel;
+            std::string msg;
+            std::getline(iss, msg);
+            if (!msg.empty() && msg[0] == ' ') {
+                msg = msg.substr(1);
+            }
+            std::cout << clientInfo.nickname << " in " << channel << " says: " << msg << std::endl;
 
-                std::string fullMsg = ":" + clientInfo.nickname + " PRIVMSG " + channel + " :" + msg + "\r\n";
-                broadcastMessage(fullMsg, clientSocket, channel);
-            }
+            std::string fullMsg = ":" + clientInfo.nickname + " PRIVMSG " + channel + " :" + msg + "\r\n";
+            broadcastMessage(fullMsg, clientSocket, channel);
         }
     }
 }
