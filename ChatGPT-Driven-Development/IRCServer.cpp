@@ -126,7 +126,7 @@ void IRCServer::handleClientMessage(int clientSocket) {
             iss >> nickname;
             clientInfo.nickname = nickname;
             std::cout << "Client set nickname: " << clientInfo.nickname << std::endl;
-            std::string welcomeMessage = ":server 001 " + clientInfo.nickname + " :Welcome to the IRC server\r\n";
+            std::string welcomeMessage = ":server 001 " + clientInfo.nickname + " :Your nickname is set to " + clientInfo.nickname + ".\r\n";
             send(clientSocket, welcomeMessage.c_str(), welcomeMessage.size(), 0);
         }
         // Process USER command
