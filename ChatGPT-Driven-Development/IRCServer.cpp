@@ -55,7 +55,8 @@ IRCServer::IRCServer(int port) {
 }
 
 IRCServer::~IRCServer() {
-    for (auto it = clients.begin(); it != clients.end(); ++it) {
+    std::map<int, ClientInfo>::iterator it;
+    for (it = clients.begin(); it != clients.end(); ++it) {
         close(it->first);
     }
     close(serverSocket);
@@ -140,7 +141,7 @@ void IRCServer::handleClientMessage(int clientSocket) {
                 std::string welcomeMessage = ":server 001 " + clientInfo.nickname + " :Welcome to the NO ANSWER IRC server\r\n";
                 send(clientSocket, welcomeMessage.c_str(), welcomeMessage.size(), 0);
             }
-        } 
+        }
         // Process JOIN command
         else if (command == "JOIN") {
             std::string channel;
@@ -149,7 +150,7 @@ void IRCServer::handleClientMessage(int clientSocket) {
             std::cout << clientInfo.nickname << " joined channel: " << channel << std::endl;
             std::string joinMessage = ":" + clientInfo.nickname + " JOIN " + channel + "\r\n";
             broadcastMessage(joinMessage, clientSocket, channel);
-        } 
+        }
         // Process PRIVMSG command
         else if (command == "PRIVMSG") {
             std::string channel;
@@ -178,15 +179,20 @@ void IRCServer::closeClientConnection(int clientSocket) {
     std::cout << "Client disconnected: " << clients[clientSocket].nickname << std::endl;
     close(clientSocket);
     clients.erase(clientSocket);
-    for (auto it = channels.begin(); it != channels.end(); ++it) {
-        it->second.erase(std::remove(it->second.begin(), it->second.end(), clientSocket), it->second.end());
-    }
+    for (std::map<std::string, std::vector<int> >::iterator it = channels.begin(); it != channels.end(); ++it) {
+    	it->second.erase(std::remove(it->second.begin(), it->second.end(), clientSocket), it->second.end());
+	}
 }
 
 void IRCServer::broadcastMessage(const std::string& message, int senderSocket, const std::string& channel) {
-    for (int clientSocket : channels[channel]) {
-        if (clientSocket != senderSocket) {
-            send(clientSocket, message.c_str(), message.size(), 0);
+    std::map<std::string, std::vector<int> >::iterator it = channels.find(channel);
+    if (it != channels.end()) {
+        std::vector<int>& clientSockets = it->second;
+        for (std::vector<int>::iterator clientSocketIt = clientSockets.begin(); clientSocketIt != clientSockets.end(); ++clientSocketIt) {
+            int clientSocket = *clientSocketIt;
+            if (clientSocket != senderSocket) {
+                send(clientSocket, message.c_str(), message.size(), 0);
+            }
         }
     }
 }
