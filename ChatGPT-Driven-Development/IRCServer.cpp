@@ -10,7 +10,7 @@
 
 IRCServer::IRCServer(int port) {
     std::cout << BOOTUP_MSG << std::endl;
-    serverSocket = socket(AF_INET, SOCK_STREAM, 0);
+	serverSocket = socket(AF_INET, SOCK_STREAM, 0);
     if (serverSocket == -1) {
         throw std::runtime_error("Failed to create socket");
     }
@@ -96,9 +96,9 @@ void IRCServer::handleNewConnection() {
             close(clientSocket);
         } else {
             clients[clientSocket] = ClientInfo();
-            std::string welcomeMessage = BOOTUP_MSG;
+			std::string welcomeMessage = BOOTUP_MSG;
             send(clientSocket, welcomeMessage.c_str(), welcomeMessage.size(), 0);
-            welcomeMessage = ":server 001 * :Welcome to the NO ANSWER IRC server\r\n";
+			welcomeMessage = ":server 001 * :Welcome to the NO ANSWER IRC server\r\n";
             send(clientSocket, welcomeMessage.c_str(), welcomeMessage.size(), 0);
         }
     }
@@ -111,6 +111,8 @@ void IRCServer::handleClientMessage(int clientSocket) {
         closeClientConnection(clientSocket);
     } else {
         std::string message(buffer, bytesRead);
+		message.erase(std::remove(message.begin(), message.end(), '\r'), message.end());
+		message.erase(std::remove(message.begin(), message.end(), '\n'), message.end());
         std::cout << "Received message from client: " << message << std::endl; // 수신한 메시지 출력
         ClientInfo &clientInfo = clients[clientSocket];
 
@@ -126,7 +128,7 @@ void IRCServer::handleClientMessage(int clientSocket) {
             std::cout << "Client set nickname: " << clientInfo.nickname << std::endl;
             std::string welcomeMessage = ":server 001 " + clientInfo.nickname + " :Welcome to the IRC server\r\n";
             send(clientSocket, welcomeMessage.c_str(), welcomeMessage.size(), 0);
-        } 
+        }
         // Process USER command
         else if (command == "USER") {
             std::string username, hostname, servername, realname;
@@ -135,7 +137,7 @@ void IRCServer::handleClientMessage(int clientSocket) {
             if (!username.empty() && !hostname.empty() && !servername.empty() && !realname.empty()) {
                 clientInfo.username = username;
                 std::cout << "Client set username: " << clientInfo.username << std::endl;
-                std::string welcomeMessage = ":server 001 " + clientInfo.nickname + " :Welcome to the IRC server\r\n";
+                std::string welcomeMessage = ":server 001 " + clientInfo.nickname + " :Welcome to the NO ANSWER IRC server\r\n";
                 send(clientSocket, welcomeMessage.c_str(), welcomeMessage.size(), 0);
             }
         } 
