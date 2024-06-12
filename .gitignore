@@ -166,4 +166,7 @@ Temporary Items
 .history
 .ionide
 
+### Clion Patch ###
+.idea/
+CMakeLists.txt
 # End of https://www.toptal.com/developers/gitignore/api/macos,clion,visualstudiocode
