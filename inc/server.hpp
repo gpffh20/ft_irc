@@ -1,22 +1,59 @@
 #ifndef SERVER_HPP
 #define SERVER_HPP
 
-#include <iostream>
+#include <fcntl.h>
+#include <netinet/in.h>
+#include <poll.h>
+#include <sys/socket.h>
+#include <unistd.h>
 
-// 최대 client 수
-// client 정보
-// channel 정보
-// server socket
-//갖고 있어야 함
+#include <iostream>
+#include <map>
+#include <stdexcept>
+#include <string>
+#include <vector>
+
+#include "client.hpp"
+
+const int MAX_CLIENTS = 256;
+
+struct Channel {
+  std::string name;
+  std::vector<int> clients;
+};
 
 class Server {
-  public:
-	Server(const std::string port_num, const std::string password);
-	~Server();
-		
-  private:
-	Server();
+ public:
+  Server(const std::string& port_num, const std::string& password);
+  ~Server();
 
+  void run();
+
+ private:
+  void setPortNum(const std::string& port_num);
+  void setPassWord(const std::string& password);
+  void setServerSocket();
+  void setServerAddr();
+  void setServerBind();
+  void setServerListen();
+  void setServerFd();
+  void addClient(int client_fd);
+  void removeClient(int client_fd);
+  void handleNewConnection();
+  void handleClientMessages(int client_fd);
+
+  int server_fd;
+  struct sockaddr_in server_addr;
+  struct sockaddr_in client_addr;
+  socklen_t client_addr_size;
+
+  std::string portnum;
+  std::string passWord;
+
+  std::map<int, Client> clients;
+  std::map<std::string, Channel> channels;
+  struct pollfd fds[MAX_CLIENTS];
+  int fd_count;
 };
 
 #endif
