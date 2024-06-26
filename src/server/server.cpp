@@ -44,7 +44,21 @@ void Server::run() {
   }
 }
 
-void Server::setPortNum(const std::string& port_num) { portnum = port_num; }
+void Server::setPortNum(const std::string& port_num) {
+	std::istringstream iss(port_num);
+	int num;
+	if (!(iss >> num) || !iss.eof()) {
+		throw std::invalid_argument("Invalid port number format.");
+	}
+
+	// 포트 번호가 숫자인지 확인
+	// 0 ~ 1023: 잘 알려진 포트 번호
+	if (num < 1024 || num > 65535) {
+		throw std::invalid_argument("Invalid port number. Please use a port number between 1024 and 65535.");
+	}
+	
+	this->portnum = num;
+}
 
 void Server::setPassWord(const std::string& password) { passWord = password; }
 
