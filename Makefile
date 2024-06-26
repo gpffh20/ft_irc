@@ -38,7 +38,6 @@ all: $(NAME)
 $(NAME): $(OBJS)
 	@$(CXX) $(CFLAGS) -o $@ $^
 	@echo "$(GREEN)Executable file created!$(RESET)"
-	
 
 $(OBJ_DIR)%.o: $(SRC_DIR)%.cpp
 	@echo "$(PURPLE)Compiling:$(RESET) $<"
