@@ -154,4 +154,7 @@ void Server::handleCommands(int client_fd, const std::string &message) {
   } else {
     write(client_fd, message.c_str(), message.size());
   }
+  // split 때려서 명령어 처리
+  // : 뒤부터는 모두 하나의 string으로 읽어야 함
+  // : 뒤에 있는 string들은 모두 reunion 시켜줘야하나?
 }
