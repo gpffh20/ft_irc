@@ -48,7 +48,7 @@ class Server {
   struct sockaddr_in client_addr;
   socklen_t client_addr_size;
 
-  std::string portnum;
+  unsigned short portnum;
   std::string passWord;
 
   std::map<int, Client> clients;

@@ -46,7 +46,7 @@ void Server::run() {
 
 void Server::setPortNum(const std::string& port_num) {
 	std::istringstream iss(port_num);
-	int num;
+	unsigned short num;
 	if (!(iss >> num) || !iss.eof()) {
 		throw std::invalid_argument("Invalid port number format.");
 	}
@@ -56,7 +56,6 @@ void Server::setPortNum(const std::string& port_num) {
 	if (num < 1024 || num > 65535) {
 		throw std::invalid_argument("Invalid port number. Please use a port number between 1024 and 65535.");
 	}
-	
 	this->portnum = num;
 }
 
@@ -74,8 +73,8 @@ void Server::setServerSocket() {
 void Server::setServerAddr() {
   server_addr.sin_family = AF_INET;
   server_addr.sin_addr.s_addr = INADDR_ANY;
-  server_addr.sin_port =
-      htons(static_cast<unsigned short>(std::atoi(portnum.c_str())));
+  server_addr.sin_port = htons(portnum);
+//      htons(static_cast<unsigned short>(std::atoi(portnum.c_str())));
 }
 
 void Server::setServerBind() {
