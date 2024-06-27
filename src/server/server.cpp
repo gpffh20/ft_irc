@@ -167,6 +167,31 @@ void Server::handleCommands(int client_fd, const std::string &message) {
   }
   std::string command = tokens[0];
   std::cout << "Command: " << command << std::endl;
+  if (command == "PASS") {
+
+  } else if (command == "NICK") {
+
+  } else if (command == "USER") {
+
+  } else if (command == "JOIN") {
+
+  } else if (command == "PRIVMSG") {
+
+  } else if (command == "QUIT") {
+
+  } else if (command == "PING") {
+
+  } else if (command == "KICK") {
+
+  } else if (command == "INVITE") {
+
+  } else if (command == "MODE") {
+
+  } else if (command == "PING") {
+
+  } else {
+    std::cerr << "Unknown command: " << command << std::endl;
+  }
   // split 때려서 명령어 처리
   // : 뒤부터는 모두 하나의 string으로 읽어야 함
   // : 뒤에 있는 string들은 모두 reunion 시켜줘야하나?
