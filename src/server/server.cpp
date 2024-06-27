@@ -6,7 +6,7 @@
 
 #include <stdexcept>
 
-Server::Server(const std::string& port_num, const std::string& password)
+Server::Server(const std::string &port_num, const std::string &password)
     : server_fd(-1), client_addr_size(sizeof(client_addr)), fd_count(0) {
   setPortNum(port_num);
   setPassWord(password);
@@ -22,12 +22,13 @@ Server::~Server() {
        it != clients.end(); ++it) {
     close(it->first);
   }
-  if (server_fd != -1) close(server_fd);
+  if (server_fd != -1)
+    close(server_fd);
 }
 
 void Server::run() {
   while (true) {
-    int poll_count = poll(fds, fd_count, -1);  // 무한 대기 상태로 폴링
+    int poll_count = poll(fds, fd_count, -1); // 무한 대기 상태로 폴링
     if (poll_count == -1) {
       throw std::runtime_error("Poll failed: " + std::string(strerror(errno)));
     }
@@ -44,22 +45,23 @@ void Server::run() {
   }
 }
 
-void Server::setPortNum(const std::string& port_num) {
-	std::istringstream iss(port_num);
-	unsigned short num;
-	if (!(iss >> num) || !iss.eof()) {
-		throw std::invalid_argument("Invalid port number format.");
-	}
+void Server::setPortNum(const std::string &port_num) {
+  std::istringstream iss(port_num);
+  unsigned short num;
+  if (!(iss >> num) || !iss.eof()) {
+    throw std::invalid_argument("Invalid port number format.");
+  }
 
-	// 포트 번호가 숫자인지 확인
-	// 0 ~ 1023: 잘 알려진 포트 번호
-	if (num < 1024 || num > 65535) {
-		throw std::invalid_argument("Invalid port number. Please use a port number between 1024 and 65535.");
-	}
-	this->portnum = num;
+  // 포트 번호가 숫자인지 확인
+  // 0 ~ 1023: 잘 알려진 포트 번호
+  if (num < 1024 || num > 65535) {
+    throw std::invalid_argument("Invalid port number. Please use a port number "
+                                "between 1024 and 65535.");
+  }
+  this->portnum = num;
 }
 
-void Server::setPassWord(const std::string& password) { passWord = password; }
+void Server::setPassWord(const std::string &password) { passWord = password; }
 
 void Server::setServerSocket() {
   server_fd = socket(AF_INET, SOCK_STREAM, 0);
@@ -74,11 +76,11 @@ void Server::setServerAddr() {
   server_addr.sin_family = AF_INET;
   server_addr.sin_addr.s_addr = INADDR_ANY;
   server_addr.sin_port = htons(portnum);
-//      htons(static_cast<unsigned short>(std::atoi(portnum.c_str())));
+  //      htons(static_cast<unsigned short>(std::atoi(portnum.c_str())));
 }
 
 void Server::setServerBind() {
-  if (bind(server_fd, (struct sockaddr*)&server_addr, sizeof(server_addr)) ==
+  if (bind(server_fd, (struct sockaddr *)&server_addr, sizeof(server_addr)) ==
       -1) {
     throw std::runtime_error("Bind failed: " + std::string(strerror(errno)));
   }
@@ -102,7 +104,7 @@ void Server::addClient(int client_fd) {
     fds[fd_count].events = POLLIN;
     fd_count++;
   } else {
-    close(client_fd);  // 최대 클라이언트 수를 초과하면 연결 거부
+    close(client_fd); // 최대 클라이언트 수를 초과하면 연결 거부
   }
 }
 
@@ -119,7 +121,7 @@ void Server::removeClient(int client_fd) {
 
 void Server::handleNewConnection() {
   int new_fd =
-      accept(server_fd, (struct sockaddr*)&client_addr, &client_addr_size);
+      accept(server_fd, (struct sockaddr *)&client_addr, &client_addr_size);
   if (new_fd == -1) {
     std::cerr << "Error accepting new connection: " << strerror(errno)
               << std::endl;
@@ -140,8 +142,16 @@ void Server::handleClientMessages(int client_fd) {
     }
     removeClient(client_fd);
   } else {
-    std::cout << "Message from " << client_fd << ": "
-              << std::string(buffer, nbytes) << std::endl;
-    // 클라이언트 메시지 처리 로직 추가
+    handleCommands(client_fd, std::string(buffer, nbytes));
+  }
+}
+
+void Server::handleCommands(int client_fd, const std::string &message) {
+  std::cout << "Received message from client " << client_fd << ": " << message
+            << std::endl;
+  if (message == "quit\n") {
+    removeClient(client_fd);
+  } else {
+    write(client_fd, message.c_str(), message.size());
   }
 }

@@ -9,10 +9,10 @@
 
 #include <iostream>
 #include <map>
+#include <sstream>
 #include <stdexcept>
 #include <string>
 #include <vector>
-#include <sstream>
 
 #include "client.hpp"
 
@@ -24,15 +24,15 @@ struct Channel {
 };
 
 class Server {
- public:
-  Server(const std::string& port_num, const std::string& password);
+public:
+  Server(const std::string &port_num, const std::string &password);
   ~Server();
 
   void run();
 
- private:
-  void setPortNum(const std::string& port_num);
-  void setPassWord(const std::string& password);
+private:
+  void setPortNum(const std::string &port_num);
+  void setPassWord(const std::string &password);
   void setServerSocket();
   void setServerAddr();
   void setServerBind();
@@ -42,6 +42,7 @@ class Server {
   void removeClient(int client_fd);
   void handleNewConnection();
   void handleClientMessages(int client_fd);
+  void handleCommands(int client_fd, const std::string &message);
 
   int server_fd;
   struct sockaddr_in server_addr;
