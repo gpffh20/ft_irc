@@ -146,14 +146,27 @@ void Server::handleClientMessages(int client_fd) {
   }
 }
 
+std::vector<std::string> Server::splitBySpace(const std::string &str) {
+  std::vector<std::string> result;
+  std::istringstream iss(str);
+  std::string word;
+
+  while (iss >> word) {
+    result.push_back(word);
+  }
+
+  return result;
+}
+
 void Server::handleCommands(int client_fd, const std::string &message) {
   std::cout << "Received message from client " << client_fd << ": " << message
             << std::endl;
-  if (message == "quit\n") {
-    removeClient(client_fd);
-  } else {
-    write(client_fd, message.c_str(), message.size());
+  std::vector<std::string> tokens = splitBySpace(message);
+  if (tokens.empty()) {
+    return;
   }
+  std::string command = tokens[0];
+  std::cout << "Command: " << command << std::endl;
   // split 때려서 명령어 처리
   // : 뒤부터는 모두 하나의 string으로 읽어야 함
   // : 뒤에 있는 string들은 모두 reunion 시켜줘야하나?

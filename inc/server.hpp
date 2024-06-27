@@ -43,6 +43,7 @@ private:
   void handleNewConnection();
   void handleClientMessages(int client_fd);
   void handleCommands(int client_fd, const std::string &message);
+  std::vector<std::string> splitBySpace(const std::string &str);
 
   int server_fd;
   struct sockaddr_in server_addr;
