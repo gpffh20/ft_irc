@@ -163,12 +163,27 @@ std::vector<std::string> Server::splitBySpace(const std::string &str) {
 }
 
 void Server::handleCommands(int client_fd, const std::string &message) {
-  std::cout << "Received message from client " << client_fd << ": " << message
-            << std::endl;
+  std::cout << "Received message from client " << client_fd << ": " << message << std::endl;
   std::vector<std::string> tokens = splitBySpace(message);
   if (tokens.empty()) {
-    return;
+      return;
   }
+  // Rejoin tokens if ':' is found
+  for (size_t i = 1; i < tokens.size(); ++i) {
+    if (tokens[i][0] == ':') {
+      std::string combined;
+      for (size_t j = i; j < tokens.size(); ++j) {
+        if (j > i) {
+          combined += " ";
+        }
+        combined += tokens[j];
+      }
+      tokens.resize(i);
+      tokens.push_back(combined.substr(1)); // Remove the leading ':'
+      break;
+    }
+  }
+
   std::string command = tokens[0];
   std::cout << "Command: " << command << std::endl;
   if (command == "PASS") {
@@ -182,7 +197,7 @@ void Server::handleCommands(int client_fd, const std::string &message) {
   } else if (command == "PRIVMSG") {
 
   } else if (command == "QUIT") {
-	  quit(client_fd, tokens);
+    quit(client_fd, tokens);
   } else if (command == "PING") {
 
   } else if (command == "KICK") {
@@ -191,12 +206,8 @@ void Server::handleCommands(int client_fd, const std::string &message) {
 
   } else if (command == "MODE") {
 
-  } else if (command == "PING") {
-
   } else {
     std::cerr << "Unknown command: " << command << std::endl;
   }
-  // split 때려서 명령어 처리
-  // : 뒤부터는 모두 하나의 string으로 읽어야 함
-  // : 뒤에 있는 string들은 모두 reunion 시켜줘야하나?
 }
+
