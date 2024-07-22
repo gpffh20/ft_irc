@@ -29,6 +29,12 @@ public:
   ~Server();
 
   void run();
+  
+  std::map<int, Client>& getClients();
+  std::map<std::string, Channel>& getChannels();
+  
+  void removeClient(int client_fd);
+
 
 private:
   void setPortNum(const std::string &port_num);
@@ -39,7 +45,6 @@ private:
   void setServerListen();
   void setServerFd();
   void addClient(int client_fd);
-  void removeClient(int client_fd);
   void handleNewConnection();
   void handleClientMessages(int client_fd);
   void handleCommands(int client_fd, const std::string &message);

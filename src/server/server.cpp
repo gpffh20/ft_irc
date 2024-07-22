@@ -45,6 +45,10 @@ void Server::run() {
   }
 }
 
+std::map<int, Client> &Server::getClients() { return clients; }
+
+std::map<std::string, Channel> &Server::getChannels() { return channels; }
+
 void Server::setPortNum(const std::string &port_num) {
   std::istringstream iss(port_num);
   unsigned short num;
@@ -178,7 +182,7 @@ void Server::handleCommands(int client_fd, const std::string &message) {
   } else if (command == "PRIVMSG") {
 
   } else if (command == "QUIT") {
-
+	  quit(client_fd, tokens);
   } else if (command == "PING") {
 
   } else if (command == "KICK") {
