@@ -1,4 +1,5 @@
 #include "../../inc/server.hpp"
+#include "../../inc/command.hpp"
 
 #include <arpa/inet.h>
 #include <errno.h>
@@ -186,6 +187,7 @@ void Server::handleCommands(int client_fd, const std::string &message) {
 
   std::string command = tokens[0];
   std::cout << "Command: " << command << std::endl;
+  Command cmdrunner;
   if (command == "PASS") {
 
   } else if (command == "NICK") {
@@ -193,13 +195,15 @@ void Server::handleCommands(int client_fd, const std::string &message) {
   } else if (command == "USER") {
 
   } else if (command == "JOIN") {
-
+    cmdrunner.join(client_fd, tokens);
+  } else if (command == "CAP") {
+    cmdrunner.join(client_fd, tokens);
   } else if (command == "PRIVMSG") {
 
   } else if (command == "QUIT") {
-    quit(client_fd, tokens);
+    cmdrunner.quit(client_fd, tokens);
   } else if (command == "PING") {
-
+    cmdrunner.ping(client_fd, tokens);
   } else if (command == "KICK") {
 
   } else if (command == "INVITE") {

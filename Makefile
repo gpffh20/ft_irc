@@ -22,7 +22,18 @@ INC_DIR = inc/
 OBJ_DIR = obj/
 
 SRC_FILES = main.cpp \
-			server/server.cpp
+			server/server.cpp \
+			cmd/command.cpp \
+			cmd/invite.cpp \
+			cmd/join.cpp \
+			cmd/kick.cpp \
+			cmd/mode.cpp \
+			cmd/nick.cpp \
+			cmd/pass.cpp \
+			cmd/ping.cpp \
+			cmd/privmsg.cpp \
+			cmd/quit.cpp \
+			cmd/user.cpp
 
 SRCS = $(addprefix $(SRC_DIR), $(SRC_FILES))
 OBJS = $(patsubst $(SRC_DIR)%.cpp,$(OBJ_DIR)%.o,$(SRCS))
