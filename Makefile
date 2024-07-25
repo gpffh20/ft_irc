@@ -24,6 +24,7 @@ OBJ_DIR = obj/
 SRC_FILES = main.cpp \
 			server/server.cpp \
 			cmd/command.cpp \
+<<<<<<< Updated upstream
 			cmd/invite.cpp \
 			cmd/join.cpp \
 			cmd/kick.cpp \
@@ -34,6 +35,11 @@ SRC_FILES = main.cpp \
 			cmd/privmsg.cpp \
 			cmd/quit.cpp \
 			cmd/user.cpp
+=======
+			cmd/quit.cpp \
+			cmd/pass.cpp \
+			cmd/nick.cpp \
+>>>>>>> Stashed changes
 
 SRCS = $(addprefix $(SRC_DIR), $(SRC_FILES))
 OBJS = $(patsubst $(SRC_DIR)%.cpp,$(OBJ_DIR)%.o,$(SRCS))

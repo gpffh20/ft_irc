@@ -18,8 +18,11 @@ class Command {
 	void quit(int client_fd, std::vector<std::string> tokens);
 	void pass(int client_fd, std::vector<std::string> tokens);
 	void nick(int client_fd, std::vector<std::string> tokens);
+<<<<<<< Updated upstream
 	void ping(int client_fd, std::vector<std::string> tokens);
 	void join(int client_fd, std::vector<std::string> tokens);
+=======
+>>>>>>> Stashed changes
   private:
 	Command &operator=(const Command&);
 	Command(const Command&);
