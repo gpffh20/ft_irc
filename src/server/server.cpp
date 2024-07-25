@@ -187,31 +187,33 @@ void Server::handleCommands(int client_fd, const std::string &message) {
 
   std::string command = tokens[0];
   std::cout << "Command: " << command << std::endl;
-  Command cmdrunner;
-  if (command == "PASS") {
-
-  } else if (command == "NICK") {
-
-  } else if (command == "USER") {
-
-  } else if (command == "JOIN") {
-    cmdrunner.join(client_fd, tokens);
-  } else if (command == "CAP") {
-    cmdrunner.join(client_fd, tokens);
-  } else if (command == "PRIVMSG") {
-
-  } else if (command == "QUIT") {
-    cmdrunner.quit(client_fd, tokens);
-  } else if (command == "PING") {
-    cmdrunner.ping(client_fd, tokens);
-  } else if (command == "KICK") {
-
-  } else if (command == "INVITE") {
-
-  } else if (command == "MODE") {
-
-  } else {
-    std::cerr << "Unknown command: " << command << std::endl;
-  }
+  command_->run(client_fd, command, tokens);
+  
+//  Command cmdrunner;
+//  if (command == "PASS") {
+//
+//  } else if (command == "NICK") {
+//
+//  } else if (command == "USER") {
+//
+//  } else if (command == "JOIN") {
+////    cmdrunner.join(client_fd, tokens);
+//  } else if (command == "CAP") {
+////    cmdrunner.join(client_fd, tokens);
+//  } else if (command == "PRIVMSG") {
+//
+//  } else if (command == "QUIT") {
+//    cmdrunner.quit(client_fd, tokens);
+//  } else if (command == "PING") {
+//    cmdrunner.ping(client_fd, tokens);
+//  } else if (command == "KICK") {
+//
+//  } else if (command == "INVITE") {
+//
+//  } else if (command == "MODE") {
+//
+//  } else {
+//    std::cerr << "Unknown command: " << command << std::endl;
+//  }
 }
 

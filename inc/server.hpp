@@ -15,6 +15,7 @@
 #include <vector>
 
 #include "client.hpp"
+#include "command.hpp"
 
 const int MAX_CLIENTS = 256;
 
@@ -34,11 +35,12 @@ public:
   std::map<std::string, Channel>& getChannels();
   
   void removeClient(int client_fd);
+  void setPassWord(const std::string &password);
+//  void setNickName(const std::string &nickname);
 
 
 private:
   void setPortNum(const std::string &port_num);
-  void setPassWord(const std::string &password);
   void setServerSocket();
   void setServerAddr();
   void setServerBind();
@@ -62,6 +64,7 @@ private:
   std::map<std::string, Channel> channels;
   struct pollfd fds[MAX_CLIENTS];
   int fd_count;
+  Command	*command_;
 };
 
 #endif

@@ -11,6 +11,7 @@ class Client {
 
   int getFd() const { return fd; }
   const std::string& getNick() const { return nick; }
+  void setNick(const std::string& nickname) { nick = nickname; }
   const std::string& getUser() const { return user; }
   bool getIsRegistered() const { return is_registered; }
   void setRegistered(bool registered) { is_registered = registered; }
