@@ -167,7 +167,6 @@ std::vector<std::string> Server::splitBySpace(const std::string &str) {
 }
 
 void Server::handleCommands(int client_fd, const std::string &message) {
-<<<<<<< Updated upstream
   std::cout << "Received message from client " << client_fd << ": " << message << std::endl;
   std::vector<std::string> tokens = splitBySpace(message);
   if (tokens.empty()) {
@@ -192,65 +191,4 @@ void Server::handleCommands(int client_fd, const std::string &message) {
   std::string command = tokens[0];
   std::cout << "Command: " << command << std::endl;
   command_->run(client_fd, command, tokens);
-  
-//  Command cmdrunner;
-//  if (command == "PASS") {
-//
-//  } else if (command == "NICK") {
-//
-//  } else if (command == "USER") {
-//
-//  } else if (command == "JOIN") {
-////    cmdrunner.join(client_fd, tokens);
-//  } else if (command == "CAP") {
-////    cmdrunner.join(client_fd, tokens);
-//  } else if (command == "PRIVMSG") {
-//
-//  } else if (command == "QUIT") {
-//    cmdrunner.quit(client_fd, tokens);
-//  } else if (command == "PING") {
-//    cmdrunner.ping(client_fd, tokens);
-//  } else if (command == "KICK") {
-//
-//  } else if (command == "INVITE") {
-//
-//  } else if (command == "MODE") {
-//
-//  } else {
-//    std::cerr << "Unknown command: " << command << std::endl;
-//  }
-=======
-	std::cout << "Received message from client " << client_fd << ": " << message << std::endl;
-	std::vector<std::string> tokens;
-	
-	std::stringstream ss(message);
-	std::string cmd;
-	while (ss >> cmd) {
-		std::cout << "cmd : " << cmd << std::endl;
-		tokens.push_back(cmd);
-	}
-//			splitBySpace(message);
-//	if (tokens.empty()) {
-//		return;
-//	}
-//	// Rejoin tokens if ':' is found
-//	for (size_t i = 1; i < tokens.size(); ++i) {
-//		if (tokens[i][0] == ':') {
-//			std::string combined;
-//			for (size_t j = i; j < tokens.size(); ++j) {
-//				if (j > i) {
-//					combined += " ";
-//				}
-//				combined += tokens[j];
-//			}
-//			tokens.resize(i);
-//			tokens.push_back(combined.substr(1)); // Remove the leading ':'
-//			break;
-//		}
-//	}
-	
-	std::string command = tokens[0];
-	std::cout << "Command: " << command << std::endl;
-	command_->run(client_fd, command, tokens);
->>>>>>> Stashed changes
 }
