@@ -22,6 +22,7 @@ class Command {
   void nick(int client_fd, std::vector<std::string> tokens);
   void ping(int client_fd, std::vector<std::string> tokens);
   void join(int client_fd, std::vector<std::string> tokens);
+  void privmsg(int client_fd, std::vector<std::string> tokens);
 
  private:
   Command &operator=(const Command &);
