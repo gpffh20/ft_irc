@@ -19,7 +19,7 @@ void Command::run(Client& client, std::string command, std::string token) {
 	
 	} else if (command == "PRIVMSG") {
 		std::cout << "PRIVMSG command\n";
-	
+		privmsg(client_fd, tokens);
 	} else if (command == "QUIT") {
 		std::cout << "QUIT command\n";
 //		quit(client_fd, tokens);
