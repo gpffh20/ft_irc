@@ -4,13 +4,13 @@ Command::Command(Server &server) : server_(server) {}
 
 Command::~Command() {}
 
-void Command::run(int client_fd, std::string command, std::vector<std::string> tokens) {
+void Command::run(Client& client, std::string command, std::string token) {
 	// 명령어 확인용
 	std::cout << "receive from client : " << command << "\n";
 	if (command == "PASS") {
-		pass(client_fd, tokens);
+		pass(client, token);
 	} else if (command == "NICK") {
-		nick(client_fd, tokens);
+		nick(client, token);
 	} else if (command == "USER") {
 		std::cout << "USER command\n";
 	
@@ -22,7 +22,7 @@ void Command::run(int client_fd, std::string command, std::vector<std::string> t
 	
 	} else if (command == "QUIT") {
 		std::cout << "QUIT command\n";
-		quit(client_fd, tokens);
+//		quit(client_fd, tokens);
 	} else if (command == "PING") {
 		std::cout << "PING command\n";
 		

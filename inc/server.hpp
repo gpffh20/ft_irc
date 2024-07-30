@@ -36,8 +36,11 @@ public:
   
   void removeClient(int client_fd);
   void setPassWord(const std::string &password);
-//  void setNickName(const std::string &nickname);
-
+  std::string& getPassWord();
+  void addNickname(const std::string &nickname);
+  std::vector<std::string> splitBySpace(const std::string &str);
+  void sendToClient(int client_fd, const std::string& message);
+  
 
 private:
   void setPortNum(const std::string &port_num);
@@ -50,7 +53,7 @@ private:
   void handleNewConnection();
   void handleClientMessages(int client_fd);
   void handleCommands(int client_fd, const std::string &message);
-  std::vector<std::string> splitBySpace(const std::string &str);
+  std::vector<std::string> splitByCRLF(const std::string &str);
 
   int server_fd;
   struct sockaddr_in server_addr;
@@ -62,8 +65,10 @@ private:
 
   std::map<int, Client> clients;
   std::map<std::string, Channel> channels;
+  std::vector<std::string> nicknames;
   struct pollfd fds[MAX_CLIENTS];
   int fd_count;
+  
   Command	*command_;
 };
 

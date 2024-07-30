@@ -8,16 +8,17 @@
 #include <map>
 
 class Server;
+class Client;
 
 class Command {
   public:
 	Command(Server &server);
 	~Command();
 	
-	void run(int client_fd, std::string command, std::vector<std::string> tokens);
-	void quit(int client_fd, std::vector<std::string> tokens);
-	void pass(int client_fd, std::vector<std::string> tokens);
-	void nick(int client_fd, std::vector<std::string> tokens);
+	void run(Client& client, std::string command, std::string token);
+//	void quit(int client_fd, std::vector<std::string> tokens);
+	void pass(Client& client, std::string token);
+	void nick(Client& client, std::string token);
 	void ping(int client_fd, std::vector<std::string> tokens);
 	void join(int client_fd, std::vector<std::string> tokens);
   private:

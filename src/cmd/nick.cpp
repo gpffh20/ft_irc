@@ -1,7 +1,8 @@
-#include "../../inc/command.hpp"
+#include "../../inc/server.hpp"
 
-void Command::nick(int client_fd, std::vector<std::string> tokens) {
-	(void) client_fd;
-	std::cout << tokens[1] << std::endl;
-//	server_.setNickName(tokens[1]);
+void Command::nick(Client& client, std::string token) {
+	token.erase(0, 5);
+	std::cout << "nick token: " << token << std::endl;
+	client.setNickname(token);
+	server_.addNickname(token);
 }
