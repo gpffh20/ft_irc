@@ -20,6 +20,8 @@ class Client {
 	void setNickname(const std::string &nickname);
 	void setMessage(const std::string &message);
 	void setIsRegistered(bool is_registered);
+	void setUsername(const std::string &username);
+	void setRealname(const std::string &realname);
   
   private:
 	Message message_;

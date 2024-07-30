@@ -12,11 +12,9 @@ void Command::run(Client& client, std::string command, std::string token) {
 	} else if (command == "NICK") {
 		nick(client, token);
 	} else if (command == "USER") {
-		std::cout << "USER command\n";
-	
+		user(client, token);
 	} else if (command == "JOIN") {
 		std::cout << "JOIN command\n";
-	
 	} else if (command == "PRIVMSG") {
 		std::cout << "PRIVMSG command\n";
 		privmsg(client, token);

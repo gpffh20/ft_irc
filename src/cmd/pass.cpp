@@ -14,5 +14,4 @@ void Command::pass(Client& client, std::string token) {
         server_.sendToClient(client.getFd(), "464 :Password incorrect\r\n");
         return;
     }
-	client.setIsRegistered(true);
 }
