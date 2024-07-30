@@ -1,8 +1,9 @@
-#include "../../inc/command.hpp"
+#include "../../inc/server.hpp"
 
-void Command::privmsg(int client_fd, std::vector<std::string> tokens) {
-  // 컴파일을 위해 client_fd void 처리
-  (void)client_fd;
+void Command::privmsg(Client& client, std::string token) {
+  // 컴파일을 위해 client void 처리
+  (void)client;
+  std::vector<std::string> tokens = server_.splitBySpace(token);
   if (tokens.size() < 3) {
     std::cerr << "Error: Not enough parameters for PRIVMSG command\n";
     return;
