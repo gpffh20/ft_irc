@@ -15,7 +15,8 @@
 #include <vector>
 
 #include "client.hpp"
-#include "command.hpp"
+
+class Command;
 
 const int MAX_CLIENTS = 256;
 
@@ -33,6 +34,7 @@ public:
   
   std::map<int, Client>& getClients();
   std::map<std::string, Channel>& getChannels();
+  std::vector<std::string>& getNicknames();
   
   void removeClient(int client_fd);
   void setPassWord(const std::string &password);

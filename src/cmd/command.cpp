@@ -41,3 +41,13 @@ void Command::run(Client& client, std::vector<std::string> args) {
 std::string Command::NEEDMOREPARAMS(std::string command) {
 	return ERR_NEEDMOREPARAMS + command + " :Not enough parameters\r\n";
 }
+
+bool Command::isNicknameExist(std::string nickname) {
+	std::map<int, Client>::iterator it;
+	for (it = server_.getClients().begin(); it != server_.getClients().end(); ++it) {
+		if (it->second.getNickname() == nickname) {
+			return true;
+		}
+	}
+	return false;
+}

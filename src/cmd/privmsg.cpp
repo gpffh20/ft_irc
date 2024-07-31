@@ -1,4 +1,4 @@
-#include "../../inc/server.hpp"
+#include "../../inc/command.hpp"
 
 void Command::privmsg(Client& client, std::vector<std::string> args) {
   // 컴파일을 위해 client void 처리

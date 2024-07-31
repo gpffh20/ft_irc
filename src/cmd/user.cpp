@@ -1,4 +1,4 @@
-#include "../../inc/server.hpp"
+#include "../../inc/command.hpp"
 
 void Command::user(Client& client, std::vector<std::string> args) {
 	if (args.size() < 5) {

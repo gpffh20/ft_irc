@@ -1,4 +1,4 @@
-#include "../../inc/server.hpp"
+#include "../../inc/command.hpp"
 
 void Command::pass(Client& client, std::vector<std::string> args) {
 	if (client.getIsRegistered()) {
@@ -15,4 +15,5 @@ void Command::pass(Client& client, std::vector<std::string> args) {
 		client.addToSendBuffer(std::string(ERR_PASSWDMISMATCH) + " :Password incorrect\r\n");
         return;
     }
+	client.setIsRegistered(true);
 }

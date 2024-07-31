@@ -9,9 +9,9 @@
 #include <map>
 
 #include "errmsg.hpp"
+#include "server.hpp"
+#include "client.hpp"
 
-class Server;
-class Client;
 
 class Command {
   public:
@@ -26,6 +26,8 @@ class Command {
 	void join(int client_fd, std::vector<std::string> args);
 	void privmsg(Client& client, std::vector<std::string> args);
 	void user(Client& client, std::vector<std::string> args);
+	
+	bool isNicknameExist(std::string nickname);
 	
 	 std::string NEEDMOREPARAMS(std::string command);
 	

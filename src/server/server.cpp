@@ -177,7 +177,6 @@ std::vector<std::string> Server::splitBySpace(const std::string &str) {
 	while (iss >> word) {
 		result.push_back(word);
 	}
-	
 	return result;
 }
 
@@ -214,3 +213,5 @@ void Server::handleCommands(Client& client) {
 void Server::sendToClient(int client_fd, const std::string& message) {
     send(client_fd, message.c_str(), message.length(), 0);
 }
+
+std::vector<std::string>& Server::getNicknames() { return nicknames; }
