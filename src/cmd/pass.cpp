@@ -1,17 +1,18 @@
 #include "../../inc/server.hpp"
 
-void Command::pass(Client& client, std::string token) {
-	std::vector<std::string> args = server_.splitBySpace(token);
+void Command::pass(Client& client, std::vector<std::string> args) {
+	if (client.getIsRegistered()) {
+		client.addToSendBuffer(std::string(ERR_ALREADYREGISTRED) + " :You are already registered\r\n");
+		return;
+	}
+	
     if (args.size() < 2) {
-        server_.sendToClient(client.getFd(), "461 PASS :Not enough parameters\r\n");
+        client.addToSendBuffer(NEEDMOREPARAMS("PASS"));
         return;
     }
-	std::string password = args[1];
-	std::cout << "password: " << password << std::endl;
-	std::cout << "server password: " << server_.getPassWord() << std::endl;
-    if (password != server_.getPassWord()) {
-		std::cout << "password incorrect" << std::endl;
-        server_.sendToClient(client.getFd(), "464 :Password incorrect\r\n");
+	
+    if (args[1] != server_.getPassWord()) {
+		client.addToSendBuffer(std::string(ERR_PASSWDMISMATCH) + " :Password incorrect\r\n");
         return;
     }
 }
