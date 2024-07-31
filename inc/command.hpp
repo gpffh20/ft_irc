@@ -8,6 +8,8 @@
 #include <iostream>
 #include <map>
 
+#include "errmsg.hpp"
+
 class Server;
 class Client;
 
@@ -16,20 +18,24 @@ class Command {
 	Command(Server &server);
 	~Command();
 	
-	void run(Client& client, std::string command, std::string token);
+	void run(Client& client, std::vector<std::string> args);
 //	void quit(int client_fd, std::vector<std::string> tokens);
-	void pass(Client& client, std::string token);
-	void nick(Client& client, std::string token);
-	void ping(int client_fd, std::vector<std::string> tokens);
-	void join(int client_fd, std::vector<std::string> tokens);
-	void privmsg(Client& client, std::string token);
-	void user(Client& client, std::string token);
+	void pass(Client& client, std::vector<std::string> args);
+	void nick(Client& client, std::vector<std::string> args);
+	void ping(int client_fd, std::vector<std::string> args);
+	void join(int client_fd, std::vector<std::string> args);
+	void privmsg(Client& client, std::vector<std::string> args);
+	void user(Client& client, std::vector<std::string> args);
+	
+	 std::string NEEDMOREPARAMS(std::string command);
+	
   
   private:
 	Command &operator=(const Command&);
 	Command(const Command&);
 	
-	 Server		&server_;
+	Server		&server_;
+	
 };
 
 #endif

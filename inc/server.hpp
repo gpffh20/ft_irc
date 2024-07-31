@@ -52,7 +52,7 @@ private:
   void addClient(int client_fd);
   void handleNewConnection();
   void handleClientMessages(int client_fd);
-  void handleCommands(int client_fd, const std::string &message);
+  void handleCommands(Client &client);
   std::vector<std::string> splitByCRLF(const std::string &str);
 
   int server_fd;

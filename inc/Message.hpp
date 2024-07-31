@@ -9,12 +9,13 @@ public:
 	Message(int fd);
 	~Message();
 	
-	void setSource(const std::string &message);
+	void setBuffer(const std::string &buffer);
+	std::string getBuffer() const;
 //	std::string parseCmd();
 	
 private:
 	int fd_;
-	std::string source_;
+	std::string buffer_;
 };
 
 #endif

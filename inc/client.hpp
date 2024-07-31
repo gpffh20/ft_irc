@@ -15,6 +15,7 @@ class Client {
 	int getFd() const;
 	const std::string &getNickname() const;
 	bool getIsRegistered() const;
+	const std::string getMessage() const;
 	
 	// setter
 	void setNickname(const std::string &nickname);
@@ -22,6 +23,11 @@ class Client {
 	void setIsRegistered(bool is_registered);
 	void setUsername(const std::string &username);
 	void setRealname(const std::string &realname);
+	
+	// send
+	void addToSendBuffer(const std::string &message);
+	
+	std::string send_buffer_;
   
   private:
 	Message message_;

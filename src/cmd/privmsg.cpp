@@ -1,17 +1,16 @@
 #include "../../inc/server.hpp"
 
-void Command::privmsg(Client& client, std::string token) {
+void Command::privmsg(Client& client, std::vector<std::string> args) {
   // 컴파일을 위해 client void 처리
   (void)client;
-  std::vector<std::string> tokens = server_.splitBySpace(token);
-  if (tokens.size() < 3) {
+  if (args.size() < 3) {
     std::cerr << "Error: Not enough parameters for PRIVMSG command\n";
     return;
   }
-  std::string target = tokens[1];
-  std::string message = tokens[2];
-  for (size_t i = 3; i < tokens.size(); ++i) {
-    message += " " + tokens[i];
+  std::string target = args[1];
+  std::string message = args[2];
+  for (size_t i = 3; i < args.size(); ++i) {
+    message += " " + args[i];
   }
   if (message[0] == ':') {
     message = message.substr(1);

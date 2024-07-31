@@ -4,20 +4,20 @@ Command::Command(Server &server) : server_(server) {}
 
 Command::~Command() {}
 
-void Command::run(Client& client, std::string command, std::string token) {
+void Command::run(Client& client, std::vector<std::string> args) {
 	// 명령어 확인용
-	std::cout << "receive from client : " << command << "\n";
+	std::string command = args[0];
 	if (command == "PASS") {
-		pass(client, token);
+		pass(client, args);
 	} else if (command == "NICK") {
-		nick(client, token);
+		nick(client, args);
 	} else if (command == "USER") {
-		user(client, token);
+		user(client, args);
 	} else if (command == "JOIN") {
 		std::cout << "JOIN command\n";
 	} else if (command == "PRIVMSG") {
 		std::cout << "PRIVMSG command\n";
-		privmsg(client, token);
+		privmsg(client, args);
 	} else if (command == "QUIT") {
 		std::cout << "QUIT command\n";
 //		quit(client_fd, tokens);
@@ -36,4 +36,8 @@ void Command::run(Client& client, std::string command, std::string token) {
 	} else {
 		std::cerr << "Unknown command: " << command << std::endl;
 	}
+}
+
+std::string Command::NEEDMOREPARAMS(std::string command) {
+	return ERR_NEEDMOREPARAMS + command + " :Not enough parameters\r\n";
 }

@@ -30,12 +30,11 @@ Server::~Server() {
 
 void Server::run() {
 	while (true) {
-		std::cout << "Polling...\n";
+//		std::cout << "Polling...\n";
 		int poll_count = poll(fds, fd_count, -1); // 무한 대기 상태로 폴링
 		if (poll_count == -1) {
 			throw std::runtime_error("Poll failed: " + std::string(strerror(errno)));
 		}
-		std::cout << "Poll count: " << poll_count << std::endl;
 		for (int i = 0; i < fd_count; ++i) {
 			if (fds[i].revents & POLLIN) {
 				if (fds[i].fd == server_fd) {
@@ -71,7 +70,6 @@ void Server::setPortNum(const std::string &port_num) {
 
 void Server::setPassWord(const std::string &password) {
 	passWord = password;
-	std::cout << "============Password: " << passWord << std::endl;
 }
 
 std::string& Server::getPassWord() { return passWord; }
@@ -139,7 +137,6 @@ void Server::removeClient(int client_fd) {
 }
 
 void Server::handleNewConnection() {
-	std::cout << "New connection\n";
 	int new_fd =
 			accept(server_fd, (struct sockaddr *)&client_addr, &client_addr_size);
 	if (new_fd == -1) {
@@ -147,18 +144,12 @@ void Server::handleNewConnection() {
 				  << std::endl;
 	} else {
 		addClient(new_fd);
-		std::cout << "New client connected: FD " << new_fd << std::endl;
 	}
 }
 
 void Server::handleClientMessages(int client_fd) {
-	std::cout << "Handling messages from client " << client_fd << std::endl;
 	char buffer[1024];
 	int nbytes = read(client_fd, buffer, sizeof(buffer));
-//	std::cout << "Received " << nbytes << " bytes from client " << client_fd
-//			  << std::endl;
-//	std::cout << "Message: " << std::string(buffer, nbytes) << std::endl;
-//	std::cout << "-----------------\n";
 	if (nbytes <= 0) {
 		if (nbytes == 0) {
 			std::cout << "Socket " << client_fd << " closed remotely." << std::endl;
@@ -168,7 +159,9 @@ void Server::handleClientMessages(int client_fd) {
 		removeClient(client_fd);
 	} else {
 		try {
-			handleCommands(client_fd, std::string(buffer, nbytes));
+			Client& client = clients.find(client_fd)->second;
+			client.setMessage(std::string(buffer, nbytes));
+			handleCommands(client);
 		} catch (const std::exception &e) {
 			std::cerr << "Error handling command: " << e.what() << std::endl;
 			sendToClient(client_fd, "500 :Internal server error\r\n");
@@ -203,22 +196,20 @@ std::vector<std::string> Server::splitByCRLF(const std::string &str) {
 	return result;
 }
 
-void Server::handleCommands(int client_fd, const std::string &message) {
-	Client& client = clients.find(client_fd)->second;
-	std::cout << "Received message from client " << client_fd << ": " << message << std::endl;
-	client.setMessage(message);
-	std::vector<std::string> tokens = splitByCRLF(message);
+void Server::handleCommands(Client& client) {
+	std::vector<std::string> tokens = splitByCRLF(client.getMessage());
 	if (tokens.empty()) {
 		return;
 	}
 	for (size_t i = 0; i < tokens.size(); ++i) {
+		std::cout << "receive from client : " << tokens[i] << "\n";
 		std::vector<std::string> args = splitBySpace(tokens[i]);
 		if (args.empty()) {
 			continue;
 		}
-		std::string command = args[0];
-		std::cout << "Command: " << command << std::endl;
-		command_->run(client, command, tokens[i]);
+//		std::string command = args[0];
+//		std::cout << "Command: " << command << std::endl;
+		command_->run(client, args);
 	}
 //  // Rejoin tokens if ':' is found
 //  for (size_t i = 1; i < tokens.size(); ++i) {

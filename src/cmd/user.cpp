@@ -1,7 +1,6 @@
 #include "../../inc/server.hpp"
 
-void Command::user(Client& client, std::string token) {
-	std::vector<std::string> args = server_.splitBySpace(token);
+void Command::user(Client& client, std::vector<std::string> args) {
 	if (args.size() < 5) {
 		server_.sendToClient(client.getFd(), "461 USER :Not enough parameters\r\n");
 		return;
