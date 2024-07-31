@@ -207,25 +207,8 @@ void Server::handleCommands(Client& client) {
 		if (args.empty()) {
 			continue;
 		}
-//		std::string command = args[0];
-//		std::cout << "Command: " << command << std::endl;
 		command_->run(client, args);
 	}
-//  // Rejoin tokens if ':' is found
-//  for (size_t i = 1; i < tokens.size(); ++i) {
-//    if (tokens[i][0] == ':') {
-//      std::string combined;
-//      for (size_t j = i; j < tokens.size(); ++j) {
-//        if (j > i) {
-//          combined += " ";
-//        }
-//        combined += tokens[j];
-//      }
-//      tokens.resize(i);
-//      tokens.push_back(combined.substr(1)); // Remove the leading ':'
-//      break;
-//    }
-//  }
 }
 
 void Server::sendToClient(int client_fd, const std::string& message) {
