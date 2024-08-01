@@ -201,17 +201,21 @@ void Server::handleCommands(Client& client) {
 		return;
 	}
 	for (size_t i = 0; i < tokens.size(); ++i) {
-		std::cout << "receive from client : " << tokens[i] << "\n";
+		std::cout << "Received from client: " << tokens[i] << "\n";
 		std::vector<std::string> args = splitBySpace(tokens[i]);
 		if (args.empty()) {
 			continue;
 		}
-		command_->run(client, args);
+		if (args[0] == "PING") {
+			sendToClient(client.getFd(), "PONG :" + args[1] + "\r\n");
+		} else {
+			command_->run(client, args);
+		}
 	}
 }
 
 void Server::sendToClient(int client_fd, const std::string& message) {
-    send(client_fd, message.c_str(), message.length(), 0);
+	send(client_fd, message.c_str(), message.length(), 0);
 }
 
 std::vector<std::string>& Server::getNicknames() { return nicknames; }
