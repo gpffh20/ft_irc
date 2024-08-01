@@ -8,6 +8,10 @@ Channel::Channel(std::string channelName) : channelName_(channelName) {
     std::cout << "Registered channel created, named " << channelName_ << std::endl;
 }
 
+Channel::~Channel() {
+    std::cout << "Channel destroyed" << std::endl;
+}
+
 std::string Channel::getChannelPassword() {
     return channelPassword_;
 }
@@ -17,7 +21,7 @@ void Channel::setChannelPassword(std::string password) {
 }
 
 std::string Channel::getChannelName() {
-    return channelName_
+    return channelName_;
 }
 
 void Channel::setChannelName(std::string name) {

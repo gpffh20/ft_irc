@@ -24,6 +24,7 @@ OBJ_DIR = obj/
 SRC_FILES = main.cpp \
 			client.cpp \
 			Message.cpp \
+			channel.cpp \
 			server/server.cpp \
 			cmd/command.cpp \
 			cmd/invite.cpp \

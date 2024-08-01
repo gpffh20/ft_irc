@@ -1,7 +1,7 @@
 #include "../../inc/command.hpp"
 
-void Command::join(int client_fd, std::vector<std::string> tokens) {
-//    send(client_fd, "HELLO", 5, MSG_OOB);
-    (void)tokens;
-    write(client_fd, "HELLO", 5);
+void Command::join(Client& client, std::vector<std::string> args) {
+    (void)client;
+    std::cout << args[1] << std::endl;
+    Channel newChannel = Channel(args[1]);
 }

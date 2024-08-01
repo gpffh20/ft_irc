@@ -1,6 +1,12 @@
 #ifndef __CHANNEL_HPP__
 #define __CHANNEL_HPP__
 
+#include <string>
+#include <iostream>
+#include <algorithm>
+#include <vector>
+#include "client.hpp"
+
 class Client;
 
 class Channel {
@@ -15,13 +21,13 @@ private:
 public:
     Channel();
     Channel(std::string channelName);
-    ~Channel()
+    ~Channel();
     std::string getChannelPassword();
     void        setChannelPassword(std::string password);
     std::string getChannelName();
     void        setChannelName(std::string name);
     int         getMaxClient();
     void        setMaxClient(int maxClient);
-}
+};
 
 #endif

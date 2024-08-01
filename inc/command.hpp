@@ -24,7 +24,7 @@ class Command {
 	void pass(Client& client, std::vector<std::string> args);
 	void nick(Client& client, std::vector<std::string> args);
 	void ping(int client_fd, std::vector<std::string> args);
-	void join(int client_fd, std::vector<std::string> args);
+	void join(Client& client, std::vector<std::string> args);
 	void privmsg(Client& client, std::vector<std::string> args);
 	void user(Client& client, std::vector<std::string> args);
 	

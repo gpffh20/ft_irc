@@ -15,6 +15,7 @@ void Command::run(Client& client, std::vector<std::string> args) {
 		user(client, args);
 	} else if (command == "JOIN") {
 		std::cout << "JOIN command\n";
+		join(client, args);
 	} else if (command == "PRIVMSG") {
 		std::cout << "PRIVMSG command\n";
 		privmsg(client, args);
