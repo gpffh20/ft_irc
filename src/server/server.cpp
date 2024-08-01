@@ -144,14 +144,41 @@ void Server::sendWelcomeMessage(int client_fd) {
 }
 
 void Server::handleNewConnection() {
-    int new_fd = accept(server_fd, (struct sockaddr *)&client_addr, &client_addr_size);
-    if (new_fd == -1) {
-        std::cerr << "Error accepting new connection: " << strerror(errno) << std::endl;
-    } else {
-        std::cout << "New client connected with fd: " << new_fd << std::endl;
-        addClient(new_fd);
-        sendWelcomeMessage(new_fd);
-    }
+	int new_fd = accept(server_fd, (struct sockaddr *)&client_addr, &client_addr_size);
+	if (new_fd == -1) {
+		std::cerr << "Error accepting new connection: " << strerror(errno) << std::endl;
+	} else {
+		std::cout << "New client connected with fd: " << new_fd << std::endl;
+		char buffer[1024];
+		int nbytes = read(new_fd, buffer, sizeof(buffer));
+		if (nbytes <= 0) {
+			if (nbytes == 0) {
+				std::cout << "Socket " << new_fd << " closed remotely." << std::endl;
+			} else {
+				std::cerr << "Read error: " << strerror(errno) << std::endl;
+			}
+			close(new_fd);
+		} else {
+			std::string message(buffer, nbytes);
+			if (message.substr(0, 5) == "PASS ") {
+				std::string password = message.substr(5);
+				password.erase(std::remove(password.begin(), password.end(), '\r'), password.end());
+				password.erase(std::remove(password.begin(), password.end(), '\n'), password.end());
+				if (password == getPassWord()) {
+					addClient(new_fd);
+					sendWelcomeMessage(new_fd);
+				} else {
+					std::cerr << "Invalid password for client with fd: " << new_fd << std::endl;
+					std::cout << "Password: " << getPassWord() << std::endl;
+					std::cout << "Received: " << password << std::endl;
+					close(new_fd);
+				}
+			} else {
+				std::cerr << "Invalid command for client with fd: " << new_fd << std::endl;
+				close(new_fd);
+			}
+		}
+	}
 }
 
 void Server::handleClientMessages(int client_fd) {
