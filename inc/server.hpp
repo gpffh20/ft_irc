@@ -34,6 +34,7 @@ public:
   std::vector<std::string>& getNicknames();
   
   void removeClient(int client_fd);
+  void sendWelcomeMessage(int client_fd);
   void setPassWord(const std::string &password);
   std::string& getPassWord();
   void addNickname(const std::string &nickname);

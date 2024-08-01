@@ -136,15 +136,22 @@ void Server::removeClient(int client_fd) {
 	}
 }
 
+void Server::sendWelcomeMessage(int client_fd) {
+    sendToClient(client_fd, "001 :Welcome to the IRC server\r\n");
+    sendToClient(client_fd, "002 :Your host is IRCServer\r\n");
+    sendToClient(client_fd, "003 :This server was created on a certain date\r\n");
+    sendToClient(client_fd, "004 :IRCServer 1.0 o o\r\n");
+}
+
 void Server::handleNewConnection() {
-	int new_fd =
-			accept(server_fd, (struct sockaddr *)&client_addr, &client_addr_size);
-	if (new_fd == -1) {
-		std::cerr << "Error accepting new connection: " << strerror(errno)
-				  << std::endl;
-	} else {
-		addClient(new_fd);
-	}
+    int new_fd = accept(server_fd, (struct sockaddr *)&client_addr, &client_addr_size);
+    if (new_fd == -1) {
+        std::cerr << "Error accepting new connection: " << strerror(errno) << std::endl;
+    } else {
+        std::cout << "New client connected with fd: " << new_fd << std::endl;
+        addClient(new_fd);
+        sendWelcomeMessage(new_fd);
+    }
 }
 
 void Server::handleClientMessages(int client_fd) {
