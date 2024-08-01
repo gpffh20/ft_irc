@@ -23,3 +23,5 @@ public:
     int         getMaxClient();
     void        setMaxClient(int maxClient);
 }
+
+#endif
