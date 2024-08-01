@@ -11,6 +11,7 @@
 #include "errmsg.hpp"
 #include "server.hpp"
 #include "client.hpp"
+#include "channel.hpp"
 
 
 class Command {

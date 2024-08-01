@@ -15,15 +15,12 @@
 #include <vector>
 
 #include "client.hpp"
+#include "channel.hpp"
 
 class Command;
+class Channel;
 
 const int MAX_CLIENTS = 256;
-
-struct Channel {
-  std::string name;
-  std::vector<int> clients;
-};
 
 class Server {
 public:
