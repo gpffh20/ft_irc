@@ -29,6 +29,8 @@ class Command {
 	void user(Client& client, std::vector<std::string> args);
 	
 	bool isNicknameExist(std::string nickname);
+	std::vector<std::string> parseForUSER(std::vector<std::string> args);
+	
 	
 	 std::string NEEDMOREPARAMS(std::string command);
 	

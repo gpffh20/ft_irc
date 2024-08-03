@@ -40,6 +40,7 @@ public:
   void addNickname(const std::string &nickname);
   std::vector<std::string> splitBySpace(const std::string &str);
   void sendToClient(int client_fd, const std::string& message);
+  void removeNickname(const std::string &nickname);
   
 
 private:
@@ -54,6 +55,7 @@ private:
   void handleClientMessages(int client_fd);
   void handleCommands(Client &client);
   std::vector<std::string> splitByCRLF(const std::string &str);
+  void sendToClients();
 
   int server_fd;
   struct sockaddr_in server_addr;

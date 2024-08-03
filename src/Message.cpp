@@ -1,13 +1,14 @@
 #include "../inc/Message.hpp"
 
 Message::Message(int fd) : fd_(fd) {
-	std::cout << "Message fd: " << fd_ << std::endl;
+	(void)fd_;
+	buffer_ = "";
 }
 
 Message::~Message() {}
 
 void Message::setBuffer(const std::string &buffer) {
-	buffer_ = buffer;
+	buffer_ += buffer;
 }
 
 std::string Message::getBuffer() const {

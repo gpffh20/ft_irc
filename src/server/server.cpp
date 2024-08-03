@@ -30,21 +30,29 @@ Server::~Server() {
 
 void Server::run() {
 	while (true) {
-//		std::cout << "Polling...\n";
+		// event_count
 		int poll_count = poll(fds, fd_count, -1); // 무한 대기 상태로 폴링
 		if (poll_count == -1) {
 			throw std::runtime_error("Poll failed: " + std::string(strerror(errno)));
 		}
+		// event 발생한 만큼 Loop
 		for (int i = 0; i < fd_count; ++i) {
 			if (fds[i].revents & POLLIN) {
 				if (fds[i].fd == server_fd) {
+					// 새로운 클라이언트 처리
 					handleNewConnection();
 				} else {
+					// 기존 클라이언트의 요청 처리
 					handleClientMessages(fds[i].fd);
 				}
+			} else if (fds[i].revents & (POLLERR | POLLHUP | POLLNVAL)) {
+				// 클라이언트 연결 종료
+				removeClient(fds[i].fd);
+				i--;
 			}
 		}
-//		sendToClients();
+		// 버퍼에 쌓인 메세지 전송
+		sendToClients();
 	}
 }
 
@@ -72,34 +80,43 @@ void Server::setPassWord(const std::string &password) {
 	passWord = password;
 }
 
-std::string& Server::getPassWord() { return passWord; }
+std::string &Server::getPassWord() { return passWord; }
 
 void Server::setServerSocket() {
-	server_fd = socket(AF_INET, SOCK_STREAM, 0);
+	server_fd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 	if (server_fd == -1) {
 		throw std::runtime_error("Could not create socket");
 	}
 	int opt = 1;
-	setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
+	if (setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) == -1) {
+		throw std::runtime_error("Setsockopt failed: " + std::string(strerror(errno)));
+	}
 }
 
 void Server::setServerAddr() {
 	std::memset(&server_addr, 0, sizeof(server_addr));
 	server_addr.sin_family = AF_INET;
-	server_addr.sin_addr.s_addr = INADDR_ANY;
 	server_addr.sin_port = htons(portnum);
+	server_addr.sin_addr.s_addr = htonl(INADDR_ANY);
 }
 
 void Server::setServerBind() {
 	if (bind(server_fd, (struct sockaddr *)&server_addr, sizeof(server_addr)) ==
 			-1) {
+		close(server_fd);
 		throw std::runtime_error("Bind failed: " + std::string(strerror(errno)));
 	}
 }
 
 void Server::setServerListen() {
 	if (listen(server_fd, 10) == -1) {
+		close(server_fd);
 		throw std::runtime_error("Listen failed: " + std::string(strerror(errno)));
+	}
+	
+	if (fcntl(server_fd, F_SETFL, O_NONBLOCK) == -1) {
+		close(server_fd);
+		throw std::runtime_error("Fcntl failed: " + std::string(strerror(errno)));
 	}
 }
 
@@ -137,21 +154,23 @@ void Server::removeClient(int client_fd) {
 }
 
 void Server::sendWelcomeMessage(int client_fd) {
-    sendToClient(client_fd, "001 :Welcome to the IRC server\r\n");
-    sendToClient(client_fd, "002 :Your host is IRCServer\r\n");
-    sendToClient(client_fd, "003 :This server was created on a certain date\r\n");
-    sendToClient(client_fd, "004 :IRCServer 1.0 o o\r\n");
+	(void)client_fd;
+//	sendToClient(client_fd, "001 :Welcome to the IRC server\r\n");
+//	sendToClient(client_fd, "002 :Your host is IRCServer\r\n");
+//	sendToClient(client_fd, "003 :This server was created on a certain date\r\n");
+//	sendToClient(client_fd, "004 :IRCServer 1.0 o o\r\n");
 }
 
 void Server::handleNewConnection() {
-    int new_fd = accept(server_fd, (struct sockaddr *)&client_addr, &client_addr_size);
-    if (new_fd == -1) {
-        std::cerr << "Error accepting new connection: " << strerror(errno) << std::endl;
-    } else {
-        std::cout << "New client connected with fd: " << new_fd << std::endl;
-        addClient(new_fd);
-        sendWelcomeMessage(new_fd);
-    }
+	int new_fd = accept(server_fd, (struct sockaddr *)&client_addr, &client_addr_size);
+	if (new_fd == -1) {
+		std::cerr << "Error accepting new connection: " << strerror(errno) << std::endl;
+		
+	} else {
+		fcntl(new_fd, F_SETFL, O_NONBLOCK);
+		addClient(new_fd);
+//		sendWelcomeMessage(new_fd);
+	}
 }
 
 void Server::handleClientMessages(int client_fd) {
@@ -166,12 +185,12 @@ void Server::handleClientMessages(int client_fd) {
 		removeClient(client_fd);
 	} else {
 		try {
-			Client& client = clients.find(client_fd)->second;
+			Client &client = clients.find(client_fd)->second;
 			client.setMessage(std::string(buffer, nbytes));
 			handleCommands(client);
 		} catch (const std::exception &e) {
 			std::cerr << "Error handling command: " << e.what() << std::endl;
-			sendToClient(client_fd, "500 :Internal server error\r\n");
+//			sendToClient(client_fd, "500 :Internal server error\r\n");
 		}
 	}
 }
@@ -202,7 +221,7 @@ std::vector<std::string> Server::splitByCRLF(const std::string &str) {
 	return result;
 }
 
-void Server::handleCommands(Client& client) {
+void Server::handleCommands(Client &client) {
 	std::vector<std::string> tokens = splitByCRLF(client.getMessage());
 	if (tokens.empty()) {
 		return;
@@ -214,15 +233,28 @@ void Server::handleCommands(Client& client) {
 			continue;
 		}
 		if (args[0] == "PING") {
-			sendToClient(client.getFd(), "PONG :" + args[1] + "\r\n");
+			client.addToSendBuffer("PONG :" + args[1] + "\r\n");
+//			sendToClient(client.getFd(), "PONG :" + args[1] + "\r\n");
 		} else {
 			command_->run(client, args);
 		}
 	}
 }
 
-void Server::sendToClient(int client_fd, const std::string& message) {
+void Server::sendToClient(int client_fd, const std::string &message) {
 	send(client_fd, message.c_str(), message.length(), 0);
 }
 
-std::vector<std::string>& Server::getNicknames() { return nicknames; }
+std::vector<std::string> &Server::getNicknames() { return nicknames; }
+
+void Server::removeNickname(const std::string &nickname) {
+	nicknames.erase(std::remove(nicknames.begin(), nicknames.end(), nickname), nicknames.end());
+}
+
+void Server::sendToClients() {
+	std::map<int, Client> &clients = getClients();
+	for (std::map<int, Client>::iterator it = clients.begin();
+		 it != clients.end(); ++it) {
+		it->second.sendMessage();
+	}
+}
