@@ -1,10 +1,8 @@
 #include "../inc/client.hpp"
 
 Client::Client(int socket_fd)
-	: message_(socket_fd), fd(socket_fd), register_(false) {
-	pass_ = false;
-	nick_ = false;
-//	user_ = false;
+	: message_(socket_fd), fd(socket_fd), register_(false), pass_(false), nick_(false), user_(false) {
+	nickname_ = "nickname";
 }
 
 Client::~Client() {}
@@ -83,6 +81,8 @@ void Client::sendMessage() {
 		const char *msg = sendbuf_.c_str();
 		send(fd, msg, sendbuf_.size(), 0);
 		sendbuf_.clear();
+		std::cout << "sendbuf clear" << std::endl;
+		std::cout << "sendbuf: " << sendbuf_ << std::endl;
 	}
 }
 
