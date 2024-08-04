@@ -14,3 +14,7 @@ void Message::setBuffer(const std::string &buffer) {
 std::string Message::getBuffer() const {
 	return buffer_;
 }
+
+void Message::clearBuffer() {
+	buffer_ = "";
+}

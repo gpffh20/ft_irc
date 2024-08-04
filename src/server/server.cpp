@@ -234,6 +234,7 @@ void Server::handleCommands(Client &client) {
 		}
 		command_->run(client, args);
 	}
+	client.clearMessage();
 }
 
 void Server::sendToClient(int client_fd, const std::string &message) {

@@ -11,6 +11,7 @@ public:
 	
 	void setBuffer(const std::string &buffer);
 	std::string getBuffer() const;
+	void clearBuffer();
 //	std::string parseCmd();
 	
 private:

@@ -39,6 +39,9 @@ class Client {
 	// send
 	void addToSendBuffer(const std::string &message);
 	void sendMessage();
+
+	// message
+	void clearMessage();
   
   private:
 	Message message_;

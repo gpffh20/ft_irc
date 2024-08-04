@@ -93,3 +93,7 @@ const std::string &Client::getHostname() const {
 const std::string &Client::getServername() const {
 	return servername_;
 }
+
+void Client::clearMessage() {
+	message_.clearBuffer();
+}
