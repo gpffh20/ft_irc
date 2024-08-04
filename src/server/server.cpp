@@ -232,12 +232,7 @@ void Server::handleCommands(Client &client) {
 		if (args.empty()) {
 			continue;
 		}
-		if (args[0] == "PING") {
-			client.addToSendBuffer("PONG :" + args[1] + "\r\n");
-//			sendToClient(client.getFd(), "PONG :" + args[1] + "\r\n");
-		} else {
-			command_->run(client, args);
-		}
+		command_->run(client, args);
 	}
 }
 
