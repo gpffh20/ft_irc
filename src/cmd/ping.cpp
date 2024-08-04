@@ -1,12 +1,11 @@
 #include "../../inc/command.hpp"
 
-void Command::ping(int client_fd, std::vector<std::string> tokens) {
-  if (tokens.size() > 1) {
-    std::string serverIdentifier = tokens[1];
-    std::string response = "PONG :" + serverIdentifier + "\r\n";
-    send(client_fd, response.c_str(), response.size(), 0);
-    std::cout << "Sent PONG to client " << client_fd << std::endl;
-  } else {
-    std::cerr << "Wrong PING command from client " << client_fd << std::endl;
-  }
+void Command::ping(Client& client, std::vector<std::string> tokens) {
+		if (tokens.size() == 1) {
+				client.addToSendBuffer("NOORIGIN " + client.getNickname() + "\r\n");
+		} else if (tokens.size() == 2) {
+				client.addToSendBuffer("PONG :" + tokens[1] + "\r\n");
+		} else {
+				client.addToSendBuffer("PONG :" + tokens[1] + " " + tokens[2] + "\r\n");
+		}
 }
