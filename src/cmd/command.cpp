@@ -39,6 +39,7 @@ void Command::run(Client &client, std::vector<std::string> args) {
 		} else if (command == "QUIT") {
 //			quit(client_fd, tokens);
 		} else if (command == "PING") {
+			ping(client, args);
 		} else if (command == "KICK") {
 		} else if (command == "INVITE") {
 		} else if (command == "MODE") {
