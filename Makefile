@@ -32,6 +32,7 @@ SRC_FILES = main.cpp \
 			cmd/kick.cpp \
 			cmd/mode.cpp \
 			cmd/nick.cpp \
+			cmd/part.cpp \
 			cmd/pass.cpp \
 			cmd/ping.cpp \
 			cmd/privmsg.cpp \
