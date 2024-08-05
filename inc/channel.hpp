@@ -34,6 +34,19 @@ public:
     void        setTopic(std::string topic);
     std::string getMode();
     void        setMode(std::string mode);
+
+    void        addClient(Client client);
+    void        removeClient(Client client);
+    void        addOp(Client client);
+    void        removeOp(Client client);
+    void        banUser(Client client);
+    void        unbanUser(Client client);
+    void        kickUser(Client client);
+    void        kickUser(Client client, std::string reason);
+
+    bool        isClientInChannel(Client client);
+    bool        isClientOp(Client client);
+    bool        isClientBanned(Client client);
 };
 
 #endif

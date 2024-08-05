@@ -51,3 +51,50 @@ std::string Channel::getMode() {
 void Channel::setMode(std::string mode) {
     mode_ = mode;
 }
+
+void Channel::addClient(Client client) {
+    clientList_.push_back(client);
+}
+
+void Channel::removeClient(Client client) {
+    clientList_.erase(std::remove(clientList_.begin(), clientList_.end(), client), clientList_.end());
+}
+
+void Channel::addOp(Client client) {
+    opUser_.push_back(client);
+}
+
+void Channel::removeOp(Client client) {
+    opUser_.erase(std::remove(opUser_.begin(), opUser_.end(), client), opUser_.end());
+}
+
+void Channel::banUser(Client client) {
+    bannedUser_.push_back(client);
+    // remove from client list
+    clientList_.erase(std::remove(clientList_.begin(), clientList_.end(), client), clientList_.end());
+}
+
+void Channel::unbanUser(Client client) {
+    bannedUser_.erase(std::remove(bannedUser_.begin(), bannedUser_.end(), client), bannedUser_.end());
+}
+
+void Channel::kickUser(Client client) {
+    clientList_.erase(std::remove(clientList_.begin(), clientList_.end(), client), clientList_.end());
+}
+
+void Channel::kickUser(Client client, std::string reason) {
+    std::cout << "Kicking user " << client.getNickname() << " for reason: " << reason << std::endl;
+    clientList_.erase(std::remove(clientList_.begin(), clientList_.end(), client), clientList_.end());
+}
+
+bool Channel::isClientInChannel(Client client) {
+    return std::find(clientList_.begin(), clientList_.end(), client) != clientList_.end();
+}
+
+bool Channel::isClientOp(Client client) {
+    return std::find(opUser_.begin(), opUser_.end(), client) != opUser_.end();
+}
+
+bool Channel::isClientBanned(Client client) {
+    return std::find(bannedUser_.begin(), bannedUser_.end(), client) != bannedUser_.end();
+}
