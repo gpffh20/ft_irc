@@ -227,7 +227,7 @@ void Server::handleCommands(Client &client) {
 		return;
 	}
 	for (size_t i = 0; i < tokens.size(); ++i) {
-		std::cout << "Received from client: " << tokens[i] << "\n";
+		std::cout << "<< " << tokens[i] << "\n";
 		std::vector<std::string> args = splitBySpace(tokens[i]);
 		if (args.empty()) {
 			continue;

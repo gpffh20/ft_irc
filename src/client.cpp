@@ -46,9 +46,9 @@ void Client::setIsRegistered(bool is_registered) {
 }
 
 void Client::addToSendBuffer(const std::string &message) {
-	std::cout << "message: " << message << std::endl;
+	std::cout << ">> " << message << std::endl;
 	sendbuf_ += message + "\r\n";
-	std::cout << "sendbuf: " << sendbuf_ << std::endl;
+	// std::cout << "sendbuf: " << sendbuf_ << std::endl;
 }
 
 void Client::setPass(bool pass) {
@@ -77,12 +77,12 @@ bool Client::getUser() const {
 
 void Client::sendMessage() {
 	if (!sendbuf_.empty()) {
-		std::cout << "send to client : " << sendbuf_ << std::endl;
+		// std::cout << "send to client : " << sendbuf_ << std::endl;
 		const char *msg = sendbuf_.c_str();
 		send(fd, msg, sendbuf_.size(), 0);
 		sendbuf_.clear();
-		std::cout << "sendbuf clear" << std::endl;
-		std::cout << "sendbuf: " << sendbuf_ << std::endl;
+		// std::cout << "sendbuf clear" << std::endl;
+		// std::cout << "sendbuf: " << sendbuf_ << std::endl;
 	}
 }
 
