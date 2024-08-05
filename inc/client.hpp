@@ -13,6 +13,8 @@ class Client {
 	Client(int socket_fd);
 	~Client();
 	
+	bool operator==(const Client &other) const;
+	
 	// getter
 	int getFd() const;
 	const std::string &getNickname() const;
@@ -42,6 +44,8 @@ class Client {
 
 	// message
 	void clearMessage();
+	
+	bool error_;
   
   private:
 	Message message_;

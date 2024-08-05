@@ -1,7 +1,7 @@
 #include "../inc/client.hpp"
 
 Client::Client(int socket_fd)
-	: message_(socket_fd), fd(socket_fd), register_(false), pass_(false), nick_(false), user_(false) {
+	: error_(false), message_(socket_fd), fd(socket_fd), register_(false), pass_(false), nick_(false), user_(false) {
 	nickname_ = "nickname";
 }
 
@@ -47,7 +47,7 @@ void Client::setIsRegistered(bool is_registered) {
 
 void Client::addToSendBuffer(const std::string &message) {
 	std::cout << "message: " << message << std::endl;
-	sendbuf_ += message;
+	sendbuf_ += message + "\r\n";
 	std::cout << "sendbuf: " << sendbuf_ << std::endl;
 }
 
@@ -96,4 +96,8 @@ const std::string &Client::getServername() const {
 
 void Client::clearMessage() {
 	message_.clearBuffer();
+}
+
+bool Client::operator==(const Client &other) const {
+	return fd == other.fd;
 }
