@@ -19,9 +19,8 @@ void Command::nick(Client& client, std::vector<std::string> args) {
 	if (client.getNick()) {
 		server_.removeNickname(args[1]);
 	}
+	client.addToSendBuffer(":" + client.getNickname() + " NICK " + args[1] + "\r\n");
 	client.setNickname(args[1]);
 	server_.addNickname(args[1]);
 	client.setNick(true);
-//	client.addToSendBuffer(":" + args[1] + " NICK :" + args[1] + "\r\n");
-//	server_.sendToClient(client.getFd(), ":" + client.getNickname() + " NICK :" + args[1] + "\r\n");
 }
