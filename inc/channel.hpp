@@ -17,6 +17,8 @@ private:
     std::string channelPassword_;
     std::string channelName_;
     int         maxClient_;
+    std::string topic_;
+    std::string mode_;
 
 public:
     Channel();
@@ -28,6 +30,10 @@ public:
     void        setChannelName(std::string name);
     int         getMaxClient();
     void        setMaxClient(int maxClient);
+    std::string getTopic();
+    void        setTopic(std::string topic);
+    std::string getMode();
+    void        setMode(std::string mode);
 };
 
 #endif

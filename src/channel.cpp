@@ -35,3 +35,19 @@ int Channel::getMaxClient() {
 void Channel::setMaxClient(int maxClient) {
     maxClient_ = maxClient;
 }
+
+std::string Channel::getTopic() {
+    return topic_;
+}
+
+void Channel::setTopic(std::string topic) {
+    topic_ = topic;
+}
+
+std::string Channel::getMode() {
+    return mode_;
+}
+
+void Channel::setMode(std::string mode) {
+    mode_ = mode;
+}
