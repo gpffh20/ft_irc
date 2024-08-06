@@ -14,7 +14,7 @@ private:
     std::vector<Client> clientList_;
     std::vector<Client> bannedUser_;
     std::vector<Client> opUser_;
-    std::string channelPassword_;
+    std::string channelKey_;
     std::string channelName_;
     int         maxClient_;
     std::string topic_;
@@ -24,8 +24,8 @@ public:
     Channel();
     Channel(std::string channelName);
     ~Channel();
-    std::string getChannelPassword();
-    void        setChannelPassword(std::string password);
+    std::string getChannelKey();
+    void        setChannelKey(std::string key);
     std::string getChannelName();
     void        setChannelName(std::string name);
     int         getMaxClient();

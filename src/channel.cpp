@@ -12,12 +12,12 @@ Channel::~Channel() {
     std::cout << "Channel destroyed" << std::endl;
 }
 
-std::string Channel::getChannelPassword() {
-    return channelPassword_;
+std::string Channel::getChannelKey() {
+    return channelKey_;
 }
 
-void Channel::setChannelPassword(std::string password) {
-    channelPassword_ = password;
+void Channel::setChannelKey(std::string key) {
+    channelKey_ = key;
 }
 
 std::string Channel::getChannelName() {
