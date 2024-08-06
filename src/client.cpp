@@ -1,9 +1,7 @@
 #include "../inc/client.hpp"
 
 Client::Client(int socket_fd)
-	: error_(false), message_(socket_fd), fd(socket_fd), register_(false), pass_(false), nick_(false), user_(false) {
-	nickname_ = "nickname";
-}
+	: error_(false), message_(socket_fd), fd(socket_fd), register_(false), pass_(false), nick_(false), user_(false) {}
 
 Client::~Client() {}
 
