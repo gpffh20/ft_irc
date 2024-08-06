@@ -18,7 +18,6 @@
 #include "channel.hpp"
 
 class Command;
-class Channel;
 
 const int MAX_CLIENTS = 256;
 
@@ -41,6 +40,8 @@ public:
   void          addNickname(const std::string &nickname);
   void          sendToClient(int client_fd, const std::string& message);
   void          removeNickname(const std::string &nickname);
+  void	     	removeChannel(const std::string &channel_name);
+  void			addChannel(const Channel &channel);
   
 
 private:

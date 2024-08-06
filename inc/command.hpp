@@ -23,6 +23,7 @@ class Command {
 	void quit(Client& client, std::vector<std::string> args);
 	void pass(Client& client, std::vector<std::string> args);
 	void nick(Client& client, std::vector<std::string> args);
+	void part(Client& client, std::vector<std::string> args);
 	void ping(Client& client, std::vector<std::string> args);
 	void join(Client& client, std::vector<std::string> args);
 	void privmsg(Client& client, std::vector<std::string> args);

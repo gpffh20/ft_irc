@@ -3,10 +3,13 @@
 
 #include <string>
 #include <unistd.h>
+#include <vector>
 #include <sys/socket.h>
 
 
 #include "Message.hpp"
+
+class Channel;
 
 class Client {
   public:
@@ -26,6 +29,7 @@ class Client {
 	bool getUser() const;
 	const std::string &getHostname() const;
 	const std::string &getServername() const;
+	std::vector<Channel*> getChannels();
 	
 	// setter
 	void setNickname(const std::string &nickname);
@@ -46,10 +50,16 @@ class Client {
 	// message
 	void clearMessage();
 	
+	// channel
+	void addChannel(Channel* channel);
+	void removeChannel(Channel* channel);
+	
 	bool error_;
   
   private:
 	Message message_;
+	std::vector<Channel*> channels; // client가 가입한 채널 목록
+
 	
 	int fd;
 	std::string nickname_;

@@ -7,6 +7,7 @@
 
 #include <stdexcept>
 
+
 Server::Server(const std::string &port_num, const std::string &password)
 		: server_fd(-1), client_addr_size(sizeof(client_addr)), fd_count(0) {
 	setPortNum(port_num);
@@ -30,6 +31,7 @@ Server::~Server() {
 
 void Server::run() {
 	while (true) {
+		std::cout << "channel size: " << channels.size() << "\n";
 		// event_count
 		int poll_count = poll(fds, fd_count, -1); // 무한 대기 상태로 폴링
 		if (poll_count == -1) {
@@ -253,4 +255,12 @@ void Server::sendToClients() {
 		 it != clients.end(); ++it) {
 		it->second.sendMessage();
 	}
+}
+
+void Server::addChannel(const Channel &channel) {
+	channels.insert(std::make_pair(channel.getChannelName(), channel));
+}
+
+void Server::removeChannel(const std::string &channel_name) {
+	channels.erase(channel_name);
 }

@@ -1,7 +1,7 @@
 #include "../inc/client.hpp"
 
 Client::Client(int socket_fd)
-	: error_(false), message_(socket_fd), fd(socket_fd), register_(false), pass_(false), nick_(false), user_(false) {}
+	: error_(false), message_(socket_fd), fd(socket_fd), nickname_("nickname"), register_(false), pass_(false), nick_(false), user_(false) {}
 
 Client::~Client() {}
 
@@ -100,4 +100,16 @@ void Client::clearMessage() {
 
 bool Client::operator==(const Client &other) const {
 	return fd == other.fd;
+}
+
+void Client::addChannel(Channel* channel) {
+	channels.push_back(channel);
+}
+
+std::vector<Channel*> Client::getChannels() {
+	return channels;
+}
+
+void Client::removeChannel(Channel* channel) {
+	channels.erase(std::remove(channels.begin(), channels.end(), channel), channels.end());
 }

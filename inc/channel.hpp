@@ -26,7 +26,7 @@ public:
     ~Channel();
     std::string getChannelKey();
     void        setChannelKey(std::string key);
-    std::string getChannelName();
+    std::string getChannelName() const;
     void        setChannelName(std::string name);
     int         getMaxClient();
     void        setMaxClient(int maxClient);
@@ -34,9 +34,10 @@ public:
     void        setTopic(std::string topic);
     std::string getMode();
     void        setMode(std::string mode);
+	std::vector<Client> &getClientList();
 
-    void        addClient(Client client);
-    void        removeClient(Client client);
+    void        addClient(Client &client);
+	void        removeClient(Client client);
     void        addOp(Client client);
     void        removeOp(Client client);
     void        banUser(Client client);

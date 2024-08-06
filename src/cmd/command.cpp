@@ -57,7 +57,6 @@ bool Command::isNicknameExist(std::string nickname) {
 	std::map<int, Client>::iterator it;
 	for (it = server_.getClients().begin(); it != server_.getClients().end(); ++it) {
 		if (it->second.getNickname() == nickname) {
-			std::cout << "??" << it->first << std::endl;
 			return true;
 		}
 	}
