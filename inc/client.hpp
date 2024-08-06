@@ -18,6 +18,7 @@ class Client {
 	// getter
 	int getFd() const;
 	const std::string &getNickname() const;
+	const std::string &getUsername() const;
 	bool getIsRegistered() const;
 	const std::string getMessage() const;
 	bool getPass() const;

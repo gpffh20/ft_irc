@@ -9,6 +9,8 @@ int Client::getFd() const { return fd; }
 
 const std::string &Client::getNickname() const { return nickname_; }
 
+const std::string &Client::getUsername() const { return username_; }
+
 bool Client::getIsRegistered() const { return register_; }
 
 const std::string Client::getMessage() const {
