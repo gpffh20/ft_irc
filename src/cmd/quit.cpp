@@ -1,17 +1,22 @@
-//#include "../../inc/server.hpp"
-//
-//void Command::quit(int client_fd, std::vector<std::string> tokens) {
-////	std::map<int, Client>& clients = server_.getClients();
-//	std::string quit_message = "Client has quit the chat";
-//
-//	if (tokens.size() > 1) {
-//		quit_message = tokens[1];
-//		for (size_t i = 2; i < tokens.size(); ++i) {
-//			quit_message += " " + tokens[i];
-//		}
-//	}
-//	// 모든 사용자에게 quit 메세지 전송
-//
-//	close(client_fd);
-//	server_.removeClient(client_fd);
-//}
+#include "../../inc/command.hpp"
+
+std::vector<std::string> Command::parseForQuit(std::vector<std::string> args) {
+	for (size_t i = 2; i < args.size(); ++i) {
+		args[1] += " " + args[i];
+	}
+	args.resize(2);
+	return args;
+}
+
+void Command::quit(Client& client, std::vector<std::string> args) {
+	(void) client;
+	std::string quitMessage;
+	if (args.size() < 2) {
+		quitMessage = ":" + client.getNickname() + "!" + client.getHostname() + "@" + client.getServername() + " QUIT :Client Quit\r\n";
+	} else {
+		args = parseForQuit(args);
+		quitMessage = ":" + client.getNickname() + "!" + client.getHostname() + "@" + client.getServername() + " QUIT " + args[1] + "\r\n";
+	}
+	client.addToSendBuffer(quitMessage);
+	
+}

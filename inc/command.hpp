@@ -20,7 +20,7 @@ class Command {
 	~Command();
 	
 	void run(Client& client, std::vector<std::string> args);
-//	void quit(int client_fd, std::vector<std::string> tokens);
+	void quit(Client& client, std::vector<std::string> args);
 	void pass(Client& client, std::vector<std::string> args);
 	void nick(Client& client, std::vector<std::string> args);
 	void ping(Client& client, std::vector<std::string> args);
@@ -30,6 +30,7 @@ class Command {
 	
 	bool isNicknameExist(std::string nickname);
 	std::vector<std::string> parseForUSER(std::vector<std::string> args);
+	std::vector<std::string> parseForQuit(std::vector<std::string> args);
 	
 	
 	 std::string NEEDMOREPARAMS(std::string command);

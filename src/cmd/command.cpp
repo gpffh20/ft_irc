@@ -37,7 +37,7 @@ void Command::run(Client &client, std::vector<std::string> args) {
 		} else if (command == "PRIVMSG") {
 			privmsg(client, args);
 		} else if (command == "QUIT") {
-//			quit(client_fd, tokens);
+			quit(client, args);
 		} else if (command == "PING") {
 			ping(client, args);
 		} else if (command == "KICK") {
