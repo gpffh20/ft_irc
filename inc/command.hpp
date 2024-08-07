@@ -28,6 +28,7 @@ class Command {
 	void join(Client& client, std::vector<std::string> args);
 	void privmsg(Client& client, std::vector<std::string> args);
 	void user(Client& client, std::vector<std::string> args);
+	void invite(Client& client, std::vector<std::string> args);
 	
 	bool isNicknameExist(std::string nickname, int fd);
 	std::vector<std::string> parseForUSER(std::vector<std::string> args);

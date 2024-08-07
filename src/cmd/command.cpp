@@ -48,6 +48,7 @@ void Command::run(Client &client, std::vector<std::string> args) {
 			ping(client, args);
 		} else if (command == "KICK") {
 		} else if (command == "INVITE") {
+			invite(client, args);
 		} else if (command == "MODE") {
 		} else {
 			std::cerr << "Unknown command: " << command << std::endl;
