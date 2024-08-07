@@ -29,7 +29,7 @@ class Command {
 	void privmsg(Client& client, std::vector<std::string> args);
 	void user(Client& client, std::vector<std::string> args);
 	
-	bool isNicknameExist(std::string nickname);
+	bool isNicknameExist(std::string nickname, int fd);
 	std::vector<std::string> parseForUSER(std::vector<std::string> args);
 	std::vector<std::string> parseForQuit(std::vector<std::string> args);
 	
