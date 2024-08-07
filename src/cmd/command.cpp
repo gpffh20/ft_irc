@@ -13,8 +13,12 @@ void Command::run(Client &client, std::vector<std::string> args) {
 			nick(client, args);
 		else if (command == "USER")
 			user(client, args);
-		else
+		else {
 			client.addToSendBuffer(ERR_NOTREGISTERED + client.getNickname() + " :You have not registered\r\n");
+			client.setError(true);
+		}
+		if (client.getError())
+			return;
 		
 		if (client.getIsRegistered()) {
 			std::string msg;
@@ -34,6 +38,8 @@ void Command::run(Client &client, std::vector<std::string> args) {
 			user(client, args);
 		} else if (command == "JOIN") {
 			join(client, args);
+		} else if (command == "PART") {
+			part(client, args);
 		} else if (command == "PRIVMSG") {
 			privmsg(client, args);
 		} else if (command == "QUIT") {
@@ -56,6 +62,7 @@ std::string Command::NEEDMOREPARAMS(std::string command) {
 bool Command::isNicknameExist(std::string nickname) {
 	std::map<int, Client>::iterator it;
 	for (it = server_.getClients().begin(); it != server_.getClients().end(); ++it) {
+		std::cout << "Checking nickname: " << it->second.getNickname() << " against " << nickname << std::endl;
 		if (it->second.getNickname() == nickname) {
 			return true;
 		}

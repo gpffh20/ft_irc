@@ -1,7 +1,15 @@
 #include "../inc/client.hpp"
 
 Client::Client(int socket_fd)
-	: error_(false), message_(socket_fd), fd(socket_fd), nickname_("nickname"), register_(false), pass_(false), nick_(false), user_(false) {}
+		: message_(socket_fd),
+		  fd(socket_fd),
+		  nickname_("nickname"),
+		  end_(false),
+		  register_(false),
+		  pass_(false),
+		  nick_(false),
+		  user_(false),
+		  error_(false) {}
 
 Client::~Client() {}
 
@@ -102,14 +110,30 @@ bool Client::operator==(const Client &other) const {
 	return fd == other.fd;
 }
 
-void Client::addChannel(Channel* channel) {
+void Client::addChannel(Channel *channel) {
 	channels.push_back(channel);
 }
 
-std::vector<Channel*> Client::getChannels() {
+std::vector<Channel *> Client::getChannels() {
 	return channels;
 }
 
-void Client::removeChannel(Channel* channel) {
+void Client::removeChannel(Channel *channel) {
 	channels.erase(std::remove(channels.begin(), channels.end(), channel), channels.end());
+}
+
+void Client::setEnd(bool end) {
+	end_ = end;
+}
+
+bool Client::getEnd() const {
+	return end_;
+}
+
+void Client::setError(bool error) {
+	error_ = error;
+}
+
+bool Client::getError() const {
+	return error_;
 }

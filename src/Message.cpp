@@ -7,6 +7,7 @@ Message::Message(int fd) : fd_(fd) {
 
 Message::~Message() {}
 
+// client한테 받은 메세지 저장
 void Message::setBuffer(const std::string &buffer) {
 	buffer_ += buffer;
 }

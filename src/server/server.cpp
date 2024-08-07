@@ -7,7 +7,6 @@
 
 #include <stdexcept>
 
-
 Server::Server(const std::string &port_num, const std::string &password)
 		: server_fd(-1), client_addr_size(sizeof(client_addr)), fd_count(0) {
 	setPortNum(port_num);
@@ -18,6 +17,7 @@ Server::Server(const std::string &port_num, const std::string &password)
 	setServerListen();
 	setServerFd();
 	command_ = new Command(*this);
+	
 }
 
 Server::~Server() {
@@ -27,6 +27,7 @@ Server::~Server() {
 	}
 	if (server_fd != -1)
 		close(server_fd);
+	close(server_fd);
 }
 
 void Server::run() {
@@ -47,14 +48,14 @@ void Server::run() {
 					// 기존 클라이언트의 요청 처리
 					handleClientMessages(fds[i].fd);
 				}
-			} else if (fds[i].revents & (POLLERR | POLLHUP | POLLNVAL)) {
+			} else if (fds[i].revents & (POLLERR | POLLHUP | POLLNVAL)) { // 에러 발생
 				// 클라이언트 연결 종료
 				removeClient(fds[i].fd);
 				i--;
 			}
 		}
 		// 버퍼에 쌓인 메세지 전송
-		sendToClients();
+//		sendToClients();
 	}
 }
 
@@ -155,44 +156,41 @@ void Server::removeClient(int client_fd) {
 	}
 }
 
-void Server::sendWelcomeMessage(int client_fd) {
-	(void)client_fd;
+// check
+//void Server::sendWelcomeMessage(int client_fd) {
+//	(void)client_fd;
 //	sendToClient(client_fd, "001 :Welcome to the IRC server\r\n");
 //	sendToClient(client_fd, "002 :Your host is IRCServer\r\n");
 //	sendToClient(client_fd, "003 :This server was created on a certain date\r\n");
 //	sendToClient(client_fd, "004 :IRCServer 1.0 o o\r\n");
-}
+//}
 
 void Server::handleNewConnection() {
 	int new_fd = accept(server_fd, (struct sockaddr *)&client_addr, &client_addr_size);
 	if (new_fd == -1) {
-		std::cerr << "Error accepting new connection: " << strerror(errno) << std::endl;
-		
-	} else {
-		fcntl(new_fd, F_SETFL, O_NONBLOCK);
-		addClient(new_fd);
-//		sendWelcomeMessage(new_fd);
+		throw std::runtime_error("Accept failed: " + std::string(strerror(errno)));
 	}
+	fcntl(new_fd, F_SETFL, O_NONBLOCK);
+	addClient(new_fd);
 }
 
 void Server::handleClientMessages(int client_fd) {
+	Client &client = clients.find(client_fd)->second;
+	
 	char buffer[1024];
 	int nbytes = read(client_fd, buffer, sizeof(buffer));
 	if (nbytes <= 0) {
 		if (nbytes == 0) {
-			std::cout << "Socket " << client_fd << " closed remotely." << std::endl;
+			client.setEnd(true);
 		} else {
-			std::cerr << "Read error: " << strerror(errno) << std::endl;
+			throw std::runtime_error("Read failed: " + std::string(strerror(errno)));
 		}
-		removeClient(client_fd);
 	} else {
 		try {
-			Client &client = clients.find(client_fd)->second;
 			client.setMessage(std::string(buffer, nbytes));
 			handleCommands(client);
 		} catch (const std::exception &e) {
 			std::cerr << "Error handling command: " << e.what() << std::endl;
-//			sendToClient(client_fd, "500 :Internal server error\r\n");
 		}
 	}
 }
@@ -235,8 +233,13 @@ void Server::handleCommands(Client &client) {
 			continue;
 		}
 		command_->run(client, args);
+		if (client.getError()) {
+			break;
+		}
 	}
 	client.clearMessage();
+	// 버퍼에 쌓인 메세지 전송
+	sendToClients();
 }
 
 void Server::sendToClient(int client_fd, const std::string &message) {

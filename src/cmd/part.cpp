@@ -1,6 +1,10 @@
-//#include "../../inc/command.hpp"
-//
-//void Command::part(Client& client, std::vector<std::string> args) {
+#include "../../inc/command.hpp"
+
+void Command::part(Client& client, std::vector<std::string> args) {
+	(void) client;
+	(void) args;
+	std::cout << "part" << std::endl;
+}
 //    if (args.size() < 2) {
 //        client.addToSendBuffer(NEEDMOREPARAMS("PART"));
 //        return;
