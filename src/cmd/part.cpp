@@ -26,7 +26,7 @@ void Command::part(Client &client, std::vector<std::string> args) {
 				ERR_NOTONCHANNEL + client.getNickname() + " " + channel_name + " :You're not on that channel\r\n");
 		return;
 	}
-
+	client.addToSendBuffer(":" + client.getNickname() + "!" + client.getUsername() + "@" + client.getHostname() + " PART " + channel_name + "\r\n");
     it->second.removeClient(client);
     client.removeChannel(&it->second);
 }
