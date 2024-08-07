@@ -1,7 +1,5 @@
 #include "../../inc/command.hpp"
 
-#include "../../inc/command.hpp"
-
 void Command::join(Client &client, std::vector<std::string> args) {
 	if (args.size() < 2) {
 		// 잘못된 명령어 형식 처리
@@ -18,6 +16,8 @@ void Command::join(Client &client, std::vector<std::string> args) {
 		Channel newChannel(channelName);
 		server_.addChannel(newChannel);
 		channel = &server_.getChannels()[channelName];
+		// Assign the first user as an operator
+		channel->addOp(client);
 	} else {
 		std::cout << "Channel exists, joining channel " << channelName << std::endl;
 		channel = &server_.getChannels()[channelName];
