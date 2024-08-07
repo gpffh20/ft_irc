@@ -13,10 +13,10 @@ void Command::part(Client &client, std::vector<std::string> args) {
 	}
 	
 	// channel안에 해당 client가 없으면 error
-	std::vector<Client> &clients = it->second.getClientList();
+	std::vector<Client *> &clients = it->second.getClientList();
 	bool client_found = false;
-	for (std::vector<Client>::iterator it_client = clients.begin(); it_client != clients.end(); ++it_client) {
-		if (it_client->getNickname() == client.getNickname()) {
+	for (std::vector<Client *>::iterator it_client = clients.begin(); it_client != clients.end(); ++it_client) {
+		if ((*it_client)->getNickname() == client.getNickname()) {
 			client_found = true;
 			break;
 		}

@@ -11,9 +11,9 @@ class Client;
 
 class Channel {
 private:
-    std::vector<Client> clientList_;
-    std::vector<Client> bannedUser_;
-    std::vector<Client> opUser_;
+    std::vector<Client *> clientList_;
+    std::vector<Client *> bannedUser_;
+    std::vector<Client *> opUser_;
     std::string channelKey_;
     std::string channelName_;
     int         maxClient_;
@@ -34,21 +34,21 @@ public:
     void        setTopic(std::string topic);
     std::string getMode();
     void        setMode(std::string mode);
-	std::vector<Client> &getClientList();
+	std::vector<Client *> &getClientList();
 
     void        addClient(Client &client);
-	void        removeClient(Client client);
-    void        addOp(Client client);
-    void        removeOp(Client client);
-    void        banUser(Client client);
-    void        unbanUser(Client client);
-    void        kickUser(Client client);
-    void        kickUser(Client client, std::string reason);
+	void        removeClient(Client &client);
+    void        addOp(Client &client);
+    void        removeOp(Client &client);
+    void        banUser(Client &client);
+    void        unbanUser(Client &client);
+    void        kickUser(Client &client);
+    void        kickUser(Client &client, std::string reason);
 	void		removeUser(std::string nickname);
 
-    bool        isClientInChannel(Client client);
-    bool        isClientOp(Client client);
-    bool        isClientBanned(Client client);
+    bool        isClientInChannel(Client &client);
+    bool        isClientOp(Client &client);
+    bool        isClientBanned(Client &client);
 };
 
 #endif

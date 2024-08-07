@@ -41,13 +41,13 @@ void Command::join(Client &client, std::vector<std::string> args) {
 	}
 	
 	// 현재 사용자 리스트 전송
-	std::vector<Client> clientList = channel->getClientList();
+	std::vector <Client *> clientList = channel->getClientList();
 	std::string userList;
-	for (std::vector<Client>::iterator it = clientList.begin(); it != clientList.end(); it++) {
+	for (std::vector<Client *>::iterator it = clientList.begin(); it != clientList.end(); it++) {
 		if (!userList.empty()) {
 			userList += " ";
 		}
-		userList += it->getNickname() + " ";
+		userList += (*it)->getNickname() + " ";
 	}
 	client.addToSendBuffer(
 			":irc.example.com 353 " + client.getNickname() + " = " + channelName + " :" + userList + "\r\n");
@@ -58,34 +58,9 @@ void Command::join(Client &client, std::vector<std::string> args) {
 	std::string joinMessage =
 			":" + client.getNickname() + "!" + client.getUsername() + "@" + client.getServername() + " JOIN :"
 					+ channelName + "\r\n";
-	for (std::vector<Client>::iterator it = clientList.begin(); it != clientList.end(); ++it) {
-		if (it->getNickname() != client.getNickname()) {
-			it->addToSendBuffer(joinMessage);
+	for (std::vector<Client *>::iterator it = clientList.begin(); it != clientList.end(); ++it) {
+		if ((*it)->getNickname() != client.getNickname()) {
+			(*it)->addToSendBuffer(joinMessage);
 		}
 	}
-	std::cout << "Client " << client.getNickname() << " joined channel " << channelName << std::endl;
 }
-//void Command::join(Client &client, std::vector<std::string> args) {
-//	std::cout << args[1] << std::endl;
-//	if (args.size() < 2) {
-//		client.addToSendBuffer(":" + server_.getServername() + " 461 " + client.getNickname() + " JOIN :Not enough parameters\r\n");
-//		return;
-//	}
-//	if (server_.getChannels().find(args[1]) == server_.getChannels().end()) {
-//		std::cout << "Channel does not exist" << std::endl;
-//		//create channel
-//		Channel newChannel(args[1]);
-//		// newChannel.addClient(client);
-//		server_.addChannel(newChannel);
-//		client.addChannel(&newChannel);
-//		client.addToSendBuffer(":" + client.getNickname() + "!" + client.getUsername() + "@" + client.getServername() + " JOIN :" + args[1] + "\r\n");
-//
-//		newChannel.addClient(client);
-//		std::cout << "Created channel " << args[1] << std::endl;
-//	} else {
-//		// server_.getChannels()[args[1]].addClient(client);
-//		std::cout << "Joined channel " << args[1] << std::endl;
-//	}
-//}
-//	// 클라이언트에 channel 추가해서 거기에 추가
-//	// channel의 client list에도 추가
