@@ -61,8 +61,7 @@ class Client {
   
   private:
 	Message message_;
-	std::vector<Channel*> channels; // client가 가입한 채널 목록
-
+	std::vector<Channel *> channels; // client가 가입한 채널 목록
 	
 	int fd;
 	std::string nickname_;

@@ -1,6 +1,6 @@
 #include "../../inc/command.hpp"
 
-void Command::nick(Client& client, std::vector<std::string> args) {
+void Command::nick(Client &client, std::vector<std::string> args) {
 	// PASS 등록 안됨
 	if (!client.getPass()) {
 		client.addToSendBuffer(std::string(ERR_NOTREGISTERED) + " :You have not registered\r\n");
@@ -13,8 +13,17 @@ void Command::nick(Client& client, std::vector<std::string> args) {
 	}
 	// 닉네임 중복
 	if (isNicknameExist(args[1], client.getFd())) {
-		client.addToSendBuffer(std::string(ERR_NICKNAMEINUSE) + " " + args[1] + " :Nickname is already in use\r\n");
-		return;
+		if (client.getNick()) {
+			// 문구 수정하기
+			client.addToSendBuffer(std::string(ERR_NICKNAMEINUSE) + " " + args[1] + " : is already in use\r\n");
+		} else {
+			std::string newNickname = args[1] + "_";
+			client.addToSendBuffer(":" + client.getNickname() + " NICK " + newNickname + "\r\n");
+			client.setNickname(newNickname);
+			server_.addNickname(newNickname);
+			client.setNick(true);
+		}
+		return ;
 	}
 	if (client.getNick()) {
 		server_.removeNickname(client.getNickname());
