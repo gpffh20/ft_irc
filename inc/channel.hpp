@@ -44,6 +44,7 @@ public:
     void        unbanUser(Client client);
     void        kickUser(Client client);
     void        kickUser(Client client, std::string reason);
+	void		removeUser(std::string nickname);
 
     bool        isClientInChannel(Client client);
     bool        isClientOp(Client client);

@@ -102,3 +102,13 @@ bool Channel::isClientBanned(Client client) {
 std::vector<Client> &Channel::getClientList() {
 	return clientList_;
 }
+
+void Channel::removeUser(std::string nickname) {
+	std::vector<Client>::iterator iter = clientList_.begin();
+	for (; iter != clientList_.end(); iter++) {
+		if (iter->getNickname() == nickname) {
+			clientList_.erase(iter);
+			break;
+		}
+	}
+}
