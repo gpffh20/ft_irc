@@ -17,5 +17,7 @@ std::string Message::getBuffer() const {
 }
 
 void Message::clearBuffer() {
+	std::cout << "before clear buffer: " << buffer_ << std::endl;
 	buffer_ = "";
+	std::cout << "after clear buffer: " << buffer_ << std::endl;
 }

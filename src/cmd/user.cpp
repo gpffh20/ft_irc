@@ -20,6 +20,7 @@ void Command::user(Client &client, std::vector<std::string> args) {
 	args = parseForUSER(args);
 	if (!client.getPass()) {
 		client.addToSendBuffer(std::string(ERR_NOTREGISTERED) + " :You have not registered\r\n");
+		client.setError(true);
 		return;
 	}
 	if (args.size() < 5) {

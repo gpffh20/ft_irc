@@ -3,7 +3,8 @@
 void Command::nick(Client &client, std::vector<std::string> args) {
 	// PASS 등록 안됨
 	if (!client.getPass()) {
-		client.addToSendBuffer(std::string(ERR_NOTREGISTERED) + " :You have not registered\r\n");
+//		client.addToSendBuffer(std::string(ERR_NOTREGISTERED) + " * :You have not registered\r\n");
+		client.setError(true);
 		return;
 	}
 	// 인자 수 오류
