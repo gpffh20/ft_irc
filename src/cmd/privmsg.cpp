@@ -1,63 +1,81 @@
+#include "../../inc/client.hpp"
 #include "../../inc/command.hpp"
 
 void Command::privmsg(Client& client, std::vector<std::string> args) {
-  // 컴파일을 위해 client void 처리
-  (void)client;
   if (args.size() < 3) {
-    std::cerr << "Error: Not enough parameters for PRIVMSG command\n";
+    client.addToSendBuffer(":ircserv " + std::string(ERR_NEEDMOREPARAMS) + " " +
+                           client.getNickname() +
+                           " PRIVMSG :Not enough parameters\r\n");
     return;
   }
-  std::string target = args[1];
-  std::string message = args[2];
+
+  std::string target = args[1];  // 메시지의 수신자 (닉네임 또는 채널)
+  std::string message = args[2];  // 전송할 메시지
   for (size_t i = 3; i < args.size(); ++i) {
     message += " " + args[i];
   }
+
   if (message[0] == ':') {
     message = message.substr(1);
   } else {
-    std::cerr << "Error: Message format incorrect\n";
+    client.addToSendBuffer(":ircserv " + std::string(ERR_NOTEXTTOSEND) + " " +
+                           client.getNickname() + " :No text to send\r\n");
     return;
   }
-  //   if (server_.isUser(target)) {
-  //     server_.sendMessageToUser(client_fd, target, message);
-  //   } else if (server_.isChannel(target)) {
-  //     server_.sendMessageToChannel(client_fd, target, message);
-  //   } else {
-  //     std::cerr << "Error: No such user or channel\n";
-  //   }
+
+  std::stringstream ss(target);
+  std::string receiver;
+  while (std::getline(ss, receiver, ',')) {
+    if (receiver[0] == '#' || receiver[0] == '&') {
+      // 전역 채널 목록에 접근
+      std::map<std::string, Channel>& channels = Server::getChannels();
+      std::map<std::string, Channel>::iterator it = channels.find(receiver);
+      if (it == channels.end()) {
+        client.addToSendBuffer(":ircserv " + std::string(ERR_NOSUCHCHANNEL) +
+                               " " + client.getNickname() + " " + receiver +
+                               " :No such channel\r\n");
+      } else {
+        Channel* channel = &it->second;
+        if (!channel->isClientInChannel(client)) {
+          client.addToSendBuffer(":ircserv " + std::string(ERR_NOTONCHANNEL) +
+                                 " " + client.getNickname() + " " +
+                                 channel->getChannelName() +
+                                 " :You're not on that channel\r\n");
+        } else {
+          std::vector<Client*>::iterator itClient;
+          for (itClient = channel->getClientList().begin();
+               itClient != channel->getClientList().end(); ++itClient) {
+            if (*itClient != &client) {
+              (*itClient)->addToSendBuffer(
+                  ":" + client.getNickname() + "!" + client.getUsername() +
+                  "@" + client.getServername() + " PRIVMSG " + receiver + " :" +
+                  message + "\r\n");
+            }
+          }
+        }
+      }
+    } else {
+      // 전역 클라이언트 목록에 접근
+      std::map<int, Client>& clients = Server::getClients();
+      Client* toClient = NULL;
+      std::map<int, Client>::iterator itClient;
+      for (itClient = clients.begin(); itClient != clients.end(); ++itClient) {
+        if (itClient->second.getNickname() == receiver) {
+          toClient = &itClient->second;
+          break;
+        }
+      }
+
+      if (!toClient) {
+        client.addToSendBuffer(":ircserv " + std::string(ERR_NOSUCHNICK) + " " +
+                               client.getNickname() + " " + receiver +
+                               " :No such nick/channel\r\n");
+      } else {
+        toClient->addToSendBuffer(":" + client.getNickname() + "!" +
+                                  client.getUsername() + "@" +
+                                  client.getServername() + " PRIVMSG " +
+                                  receiver + " :" + message + "\r\n");
+      }
+    }
+  }
 }
-
-// server 쪽에 추가할 함수 예시
-// bool Server::isUser(const std::string &nickname) {
-//   return users_.find(nickname) != users_.end();
-// }
-
-// bool Server::isChannel(const std::string &channelName) {
-//   return channels_.find(channelName) != channels_.end();
-// }
-
-// void Server::sendMessageToUser(int client_fd, const std::string &nickname, const std::string &message) {
-//   auto it = users_.find(nickname);
-//   if (it != users_.end()) {
-//     int target_fd = it->second;
-//     std::string full_message = ":" + std::to_string(client_fd) + " PRIVMSG " + nickname + " :" + message + "\r\n";
-//     send(target_fd, full_message.c_str(), full_message.length(), 0);
-//   } else {
-//     std::cerr << "Error: No such user\n";
-//   }
-// }
-
-// void Server::sendMessageToChannel(int client_fd, const std::string &channelName, const std::string &message) {
-//   auto it = channels_.find(channelName);
-//   if (it != channels_.end()) {
-//     std::vector<int> &clients = it->second;
-//     std::string full_message = ":" + std::to_string(client_fd) + " PRIVMSG " + channelName + " :" + message + "\r\n";
-//     for (int target_fd : clients) {
-//       if (target_fd != client_fd) {
-//         send(target_fd, full_message.c_str(), full_message.length(), 0);
-//       }
-//     }
-//   } else {
-//     std::cerr << "Error: No such channel\n";
-//   }
-// }

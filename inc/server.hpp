@@ -28,8 +28,9 @@ public:
 
   void run();
   
-  std::map<int, Client>&          getClients();
-  std::map<std::string, Channel>& getChannels();
+  static std::map<int, Client>& getClients();
+  static std::map<std::string, Channel>& getChannels();
+
   std::vector<std::string>&       getNicknames();
   std::vector<std::string>        splitBySpace(const std::string &str);
   
@@ -67,8 +68,9 @@ private:
   unsigned short  portnum;
   std::string     passWord;
 
-  std::map<int, Client>           clients;
-  std::map<std::string, Channel>  channels;
+  static std::map<int, Client> clients;
+  static std::map<std::string, Channel> channels;
+
   std::vector<std::string>        nicknames;
   struct pollfd                   fds[MAX_CLIENTS];
   int                             fd_count;

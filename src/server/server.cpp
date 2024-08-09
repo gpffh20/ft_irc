@@ -7,6 +7,9 @@
 
 #include <stdexcept>
 
+std::map<int, Client> Server::clients;
+std::map<std::string, Channel> Server::channels;
+
 Server::Server(const std::string &port_num, const std::string &password)
 		: server_fd(-1), client_addr_size(sizeof(client_addr)), fd_count(0) {
 	setPortNum(port_num);
