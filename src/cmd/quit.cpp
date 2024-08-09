@@ -1,6 +1,6 @@
 #include "../../inc/command.hpp"
 
-std::vector<std::string> Command::parseForQuit(std::vector<std::string> args) {
+std::vector<std::string> Command::parseForQUIT(std::vector<std::string> args) {
 	for (size_t i = 2; i < args.size(); ++i) {
 		args[1] += " " + args[i];
 	}
@@ -14,7 +14,7 @@ void Command::quit(Client &client, std::vector<std::string> args) {
 		quitMessage = ":" + client.getNickname() + "!" + client.getHostname() + "@" + client.getServername()
 				+ " QUIT :Client Quit\r\n";
 	} else {
-		args = parseForQuit(args);
+		args = parseForQUIT(args);
 		quitMessage = ":" + client.getNickname() + "!" + client.getHostname() + "@" + client.getServername() + " QUIT "
 				+ args[1] + "\r\n";
 	}

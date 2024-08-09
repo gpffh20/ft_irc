@@ -13,7 +13,6 @@
 #include "client.hpp"
 #include "channel.hpp"
 
-
 class Command {
   public:
 	Command(Server &server);
@@ -29,15 +28,18 @@ class Command {
 	void privmsg(Client& client, std::vector<std::string> args);
 	void user(Client& client, std::vector<std::string> args);
 	void invite(Client& client, std::vector<std::string> args);
+	void kick(Client &client, std::vector<std::string> args);
 	void mode(Client& client, std::vector<std::string> args);
+
 	
+
 	bool isNicknameExist(std::string nickname, int fd);
 	std::vector<std::string> parseForUSER(std::vector<std::string> args);
-	std::vector<std::string> parseForQuit(std::vector<std::string> args);
+	std::vector<std::string> parseForQUIT(std::vector<std::string> args);
+	std::vector<std::string> parseForKICK(std::vector<std::string> args);
 	
-	
-	 std::string NEEDMOREPARAMS(std::string command);
-	
+	std::string NEEDMOREPARAMS(std::string command);
+	Channel *getChannelByName(std::string channelName);
   
   private:
 	Command &operator=(const Command&);

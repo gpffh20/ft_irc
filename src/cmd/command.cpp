@@ -47,6 +47,7 @@ void Command::run(Client &client, std::vector<std::string> args) {
 		} else if (command == "PING") {
 			ping(client, args);
 		} else if (command == "KICK") {
+			kick(client, args);
 		} else if (command == "INVITE") {
 			invite(client, args);
 		} else if (command == "MODE") {
@@ -70,4 +71,12 @@ bool Command::isNicknameExist(std::string nickname, int fd) {
 		}
 	}
 	return false;
+}
+
+Channel* Command::getChannelByName(std::string channelName) {
+	std::map<std::string, Channel>::iterator it = server_.getChannels().find(channelName);
+	if (it == server_.getChannels().end()) {
+		return NULL;
+	}
+	return &it->second;
 }

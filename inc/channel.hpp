@@ -45,10 +45,14 @@ public:
     void        kickUser(Client &client);
     void        kickUser(Client &client, std::string reason);
 	void		removeUser(std::string nickname);
+//	void		sendToChannel(std::string message);
+	
+	Client*		getClientByNickname(std::string nickname);
 
     bool        isClientInChannel(Client &client);
     bool        isClientOp(Client &client);
     bool        isClientBanned(Client &client);
+	bool		isOp(std::string nickname);
 };
 
 #endif

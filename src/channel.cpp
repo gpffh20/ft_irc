@@ -112,3 +112,31 @@ void Channel::removeUser(std::string nickname) {
 		}
 	}
 }
+
+bool Channel::isOp(std::string nickname) {
+	std::vector<Client *>::iterator iter = opUser_.begin();
+	for (; iter != opUser_.end(); iter++) {
+		if ((*iter)->getNickname() == nickname) {
+			return true;
+		}
+	}
+	return false;
+}
+
+Client*	Channel::getClientByNickname(std::string nickname) {
+	std::vector<Client *>::iterator iter = clientList_.begin();
+	for (; iter != clientList_.end(); iter++) {
+		if ((*iter)->getNickname() == nickname) {
+			return *iter;
+		}
+	}
+	return NULL;
+}
+
+//void Channel::sendToChannel(std::string message) {
+//	(void) message;
+//	std::vector<Client *>::iterator iter = clientList_.begin();
+//	for (; iter != clientList_.end(); iter++) {
+//		(*iter)->appendClientRecvBuf(message);
+//	}
+//}
