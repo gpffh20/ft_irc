@@ -8,15 +8,30 @@ std::vector<std::string> Command::parseForQuit(std::vector<std::string> args) {
 	return args;
 }
 
-void Command::quit(Client& client, std::vector<std::string> args) {
-	(void) client;
+void Command::quit(Client &client, std::vector<std::string> args) {
 	std::string quitMessage;
 	if (args.size() < 2) {
-		quitMessage = ":" + client.getNickname() + "!" + client.getHostname() + "@" + client.getServername() + " QUIT :Client Quit\r\n";
+		quitMessage = ":" + client.getNickname() + "!" + client.getHostname() + "@" + client.getServername()
+				+ " QUIT :Client Quit\r\n";
 	} else {
 		args = parseForQuit(args);
-		quitMessage = ":" + client.getNickname() + "!" + client.getHostname() + "@" + client.getServername() + " QUIT " + args[1] + "\r\n";
+		quitMessage = ":" + client.getNickname() + "!" + client.getHostname() + "@" + client.getServername() + " QUIT "
+				+ args[1] + "\r\n";
 	}
 	client.addToSendBuffer(quitMessage);
-	
+	client.sendMessage();  // 남아있는 메시지 즉시 전송
+	server_.removeClient(client.getFd());  // 클라이언트 연결 종료
 }
+
+//void Command::quit(Client& client, std::vector<std::string> args) {
+//	(void) client;
+//	std::string quitMessage;
+//	if (args.size() < 2) {
+//		quitMessage = ":" + client.getNickname() + "!" + client.getHostname() + "@" + client.getServername() + " QUIT :Client Quit\r\n";
+//	} else {
+//		args = parseForQuit(args);
+//		quitMessage = ":" + client.getNickname() + "!" + client.getHostname() + "@" + client.getServername() + " QUIT " + args[1] + "\r\n";
+//	}
+//	client.addToSendBuffer(quitMessage);
+//
+//}

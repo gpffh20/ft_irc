@@ -2,8 +2,7 @@
 
 void Command::nick(Client &client, std::vector<std::string> args) {
 	// PASS 등록 안됨
-	if (!client.getPass()) {
-//		client.addToSendBuffer(std::string(ERR_NOTREGISTERED) + " * :You have not registered\r\n");
+	if (!client.getNick() && !client.getPass()) {
 		client.setError(true);
 		return;
 	}
@@ -16,8 +15,8 @@ void Command::nick(Client &client, std::vector<std::string> args) {
 	// 닉네임 중복
 	if (isNicknameExist(nickname, client.getFd())) {
 		if (client.getNick()) {
-			// 문구 수정하기
-			client.addToSendBuffer(std::string(ERR_NICKNAMEINUSE) + " " + nickname + " :Nickname is already in use\r\n");
+			client.addToSendBuffer(
+					std::string(ERR_NICKNAMEINUSE) + " " + nickname + " :Nickname is already in use\r\n");
 			return;
 		} else {
 			nickname = nickname + "_";

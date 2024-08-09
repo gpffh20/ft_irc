@@ -41,6 +41,7 @@ void Server::run() {
 		// event 발생한 만큼 Loop
 		for (int i = 0; i < fd_count; ++i) {
 			if (fds[i].revents & POLLIN) {
+				std::cout << "POLLIN event on fd: " << fds[i].fd << std::endl;
 				if (fds[i].fd == server_fd) {
 					// 새로운 클라이언트 처리
 					handleNewConnection();
@@ -49,6 +50,7 @@ void Server::run() {
 					handleClientMessages(fds[i].fd);
 				}
 			} else if (fds[i].revents & (POLLERR | POLLHUP | POLLNVAL)) { // 에러 발생
+				std::cout << "POLLERR | POLLHUP | POLLNVAL event on fd: " << fds[i].fd << std::endl;
 				// 클라이언트 연결 종료
 				removeClient(fds[i].fd);
 				i--;
@@ -145,8 +147,12 @@ void Server::addNickname(const std::string &nickname) {
 }
 
 void Server::removeClient(int client_fd) {
-	close(client_fd);
-	clients.erase(client_fd);
+	std::map<int, Client>::iterator it = clients.find(client_fd);
+	if (it != clients.end()) {
+		it->second.sendMessage();  // 남아있는 메세지 전송
+		close(client_fd);
+		clients.erase(it);
+	}
 	for (int i = 0; i < fd_count; i++) {
 		if (fds[i].fd == client_fd) {
 			fds[i] = fds[fd_count - 1];
@@ -155,6 +161,16 @@ void Server::removeClient(int client_fd) {
 		}
 	}
 }
+//	close(client_fd);
+//	clients.erase(client_fd);
+//	for (int i = 0; i < fd_count; i++) {
+//		if (fds[i].fd == client_fd) {
+//			fds[i] = fds[fd_count - 1];
+//			fd_count--;
+//			break;
+//		}
+//	}
+//}
 
 void Server::handleNewConnection() {
 	int new_fd = accept(server_fd, (struct sockaddr *)&client_addr, &client_addr_size);

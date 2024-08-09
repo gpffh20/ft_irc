@@ -65,7 +65,6 @@ bool Command::isNicknameExist(std::string nickname, int fd) {
 	for (it = server_.getClients().begin(); it != server_.getClients().end(); ++it) {
 		if (it->second.getFd() == fd)
 			continue;
-		std::cout << "Checking nickname: " << it->second.getNickname() << " against " << nickname << std::endl;
 		if (it->second.getNickname() == nickname) {
 			return true;
 		}
