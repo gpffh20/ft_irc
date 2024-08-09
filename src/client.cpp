@@ -137,3 +137,21 @@ void Client::setError(bool error) {
 bool Client::getError() const {
 	return error_;
 }
+
+// void Client::addToSendBuffer(const std::string &message) {
+//     sendbuf_ += message;
+//     sendMessage();  // 메시지 즉시 전송
+// }
+
+// void Client::sendMessage() {
+//     if (!sendbuf_.empty()) {
+//         const char *msg = sendbuf_.c_str();
+//         ssize_t sent = send(fd, msg, sendbuf_.size(), 0);
+//         if (sent > 0) {
+//             sendbuf_.erase(0, sent);
+//         }
+//         if (sent < 0) {
+//             // 오류 처리
+//         }
+//     }
+// }

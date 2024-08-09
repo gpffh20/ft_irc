@@ -10,17 +10,19 @@ void Command::privmsg(Client& client, std::vector<std::string> args) {
   }
 
   std::string target = args[1];  // 메시지의 수신자 (닉네임 또는 채널)
-  std::string message = args[2];  // 전송할 메시지
-  for (size_t i = 3; i < args.size(); ++i) {
-    message += " " + args[i];
-  }
+  std::string message;
 
-  if (message[0] == ':') {
-    message = message.substr(1);
+  // 메시지 파싱 및 유효성 검사
+  if (args[2][0] == ':') {
+    message = args[2].substr(1);  // ':' 제거
   } else {
     client.addToSendBuffer(":ircserv " + std::string(ERR_NOTEXTTOSEND) + " " +
                            client.getNickname() + " :No text to send\r\n");
     return;
+  }
+
+  for (size_t i = 3; i < args.size(); ++i) {
+    message += " " + args[i];
   }
 
   std::stringstream ss(target);
