@@ -31,8 +31,7 @@ class Command {
 	void kick(Client &client, std::vector<std::string> args);
 	void mode(Client& client, std::vector<std::string> args);
 
-	
-
+	bool processMode(Client& client, Channel& channel, char mode, char sign, const std::string& param);
 	bool isNicknameExist(std::string nickname, int fd);
 	std::vector<std::string> parseForUSER(std::vector<std::string> args);
 	std::vector<std::string> parseForQUIT(std::vector<std::string> args);
