@@ -37,6 +37,10 @@ public:
     void        setTopic(std::string topic);
     std::string getMode();
     void        setMode(std::string mode);
+    bool        getInviteOnly();
+    void        setInviteOnly(bool inviteOnly);
+    bool        getTopicProtected();
+    void        setTopicProtected(bool topicProtected);
 	std::vector<Client *> &getClientList();
 
     void        addClient(Client &client);
@@ -47,8 +51,8 @@ public:
     void        unbanUser(Client &client);
     void        kickUser(Client &client);
     void        kickUser(Client &client, std::string reason);
-	void		removeUser(std::string nickname);
-//	void		sendToChannel(std::string message);
+	void        removeUser(std::string nickname);
+	void        sendToChannel(std::string& message);
 	
 	Client*		getClientByNickname(std::string nickname);
 

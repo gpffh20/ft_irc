@@ -52,6 +52,22 @@ void Channel::setMode(std::string mode) {
 	mode_ = mode;
 }
 
+bool Channel::getInviteOnly() {
+	return inviteOnly_;
+}
+
+void Channel::setInviteOnly(bool inviteOnly) {
+	inviteOnly_ = inviteOnly;
+}
+
+bool Channel::getTopicProtected() {
+	return topicProtected_;
+}
+
+void Channel::setTopicProtected(bool topicProtected) {
+	topicProtected_ = topicProtected;
+}
+
 void Channel::addClient(Client &client) {
 	if (clientList_.size() == 0) {
 		opUser_.push_back(&client);
@@ -181,6 +197,12 @@ std::string Channel::getModeString(Client& client) {
 	}
 
 	return modeString.str();
+}
+
+void Channel::sendToChannel(std::string& message) {
+	for (std::vector<Client*>::iterator it = clientList_.begin(); it != clientList_.end(); ++it) {
+		(*it)->addToSendBuffer(message);
+	}
 }
 
 

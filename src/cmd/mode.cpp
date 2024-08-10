@@ -12,6 +12,7 @@ void Command::mode(Client& client, std::vector<std::string> args) {
 	}
 
 	std::string target = args[1];
+	bool isProcessed = false;
 
 	// 사용자 모드 설정이 필요한 경우 (nickname 모드 처리)
 	if (target[0] != '#') { // 채널 이름이 아니면 사용자 모드로 간주
@@ -59,7 +60,6 @@ void Command::mode(Client& client, std::vector<std::string> args) {
 	size_t argIndex = 3;
 	char currentSign = 0;
 	std::string param;
-	// bool modeChangeSuccess = false;
 
 	// 모드 문자열을 순회하면서 각 모드 처리
 	for (size_t i = 0; i < modes.length(); ++i) {
@@ -80,58 +80,71 @@ void Command::mode(Client& client, std::vector<std::string> args) {
 			}
 		}
 
-		// // 모드 변경 처리
-		// modeChangeSuccess = processMode(client, channel, mode, currentSign, param);
-		// if (!modeChangeSuccess) {
-		// 	return; // 모드 변경 실패 시 처리 중단
-		// }
+		if (processMode(client, channel, mode, currentSign, param)) {
+			isProcessed = true;
+		}
 	}
 
-	// 모드 변경 성공 시, 채널의 모든 클라이언트에게 변경 사항 방송
-	// if (modeChangeSuccess) {
-	// 	// 모드 변경 메시지 구성 및 방송
-	// 	std::string modeChangeMessage = "MODE " + channelName + " " + modes;
-	// 	for (size_t i = 3; i < args.size(); ++i) {
-	// 		modeChangeMessage += " " + args[i];
-	// 	}
-	// 	channel.broadcastToAllClients(modeChangeMessage);
-	// }
+	// 모드 변경 메시지 구성 및 방송
+	if (isProcessed) {
+		std::string modeChangeMessage = "MODE " + channel.getChannelName() + " " + modes;
+		for (size_t i = 3; i < args.size(); ++i) {
+			modeChangeMessage += " " + args[i];
+		}
+		channel.sendToChannel(modeChangeMessage);
+	}
 }
 
-// // 각 모드 변경을 처리하는 함수
-// bool Command::processMode(Client& client, Channel& channel, char mode, char sign, const std::string& param) {
-// 	bool isAdd = (sign == '+');
-// 	switch (mode) {
-// 		case 'i':
-// 			return channel.setInviteOnly(isAdd);
-// 		case 't':
-// 			return channel.setTopicProtected(isAdd);
-// 		case 'k':
-// 			if (isAdd) {
-// 				return channel.setKey(param);
-// 			} else {
-// 				return channel.removeKey();
-// 			}
-// 		case 'l':
-// 			if (isAdd) {
-// 				int limit = atoi(param.c_str());
-// 				if (limit > 0) {
-// 					return channel.setUserLimit(limit);
-// 				} else {
-// 					client.addToSendBuffer(std::string(ERR_KEYSET) + " " + client.getNickname() + " :Invalid limit\n");
-// 					return false;
-// 				}
-// 			} else {
-// 				return channel.removeUserLimit();
-// 			}
-// 		case 'o':
-// 			if (param.empty()) {
-// 				client.addToSendBuffer(std::string(ERR_NOSUCHNICK) + " " + client.getNickname() + " :Nickname required for operator mode\n");
-// 				return false;
-// 			}
-// 			return channel.setOperator(param, isAdd);
-// 		default:
-// 			client.addToSendBuffer(std::string(ERR_UNKNOWNMODE) + " " + client.getNickname() + " " + mode + " :Unknown mode character\n");
-// 			return false;
-// 	}
-// }
+// 각 모드 변경을 처리하는 함수
+bool Command::processMode(Client& client, Channel& channel, char mode, char sign, const std::string& param) {
+	bool isAdd = (sign == '+');
+	switch (mode) {
+		case 'i':
+			channel.setInviteOnly(isAdd);
+			return true;
+		case 't':
+			channel.setTopicProtected(isAdd);
+			return true;
+		case 'k':
+			if (isAdd && !param.empty()) {
+				channel.setChannelKey(param);
+				return true;
+			} else if (!isAdd) {
+				channel.setChannelKey("");
+				return true;
+			}
+			break;
+		case 'l':
+			if (isAdd) {
+				int limit = atoi(param.c_str());
+				if (limit > 0) {
+					channel.setMaxClient(limit);
+					return true;
+				} else {
+					client.addToSendBuffer(std::string(ERR_KEYSET) + " " + client.getNickname() + " :Invalid limit\n");
+				}
+			} else {
+				channel.setMaxClient(0);
+				return true;
+			}
+			break;
+		case 'o':
+			if (param.empty()) {
+				client.addToSendBuffer(std::string(ERR_NOSUCHNICK) + " " + client.getNickname() + " :Nickname required for operator mode\n");
+			} else {
+				Client* opClient = channel.getClientByNickname(param);
+				if (opClient != NULL) {
+					if (isAdd) {
+						channel.addOp(*opClient);
+					} else {
+						channel.removeOp(*opClient);
+					}
+					return true;
+				} else {
+					client.addToSendBuffer(std::string(ERR_NOSUCHNICK) + " " + client.getNickname() + " " + param + " :No such nick/channel\n");
+				}
+			}
+			break;
+	}
+	return false;
+}
