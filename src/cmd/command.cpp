@@ -52,6 +52,8 @@ void Command::run(Client &client, std::vector<std::string> args) {
 			invite(client, args);
 		} else if (command == "MODE") {
 			mode(client, args);
+		} else if (command == "TOPIC") {
+			topic(client, args);
 		} else {
 			std::cerr << "Unknown command: " << command << std::endl;
 		}

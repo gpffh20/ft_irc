@@ -53,6 +53,9 @@ void Channel::setMode(std::string mode) {
 }
 
 void Channel::addClient(Client &client) {
+	if (clientList_.size() == 0) {
+		opUser_.push_back(&client);
+	}
 	clientList_.push_back(&client);
 }
 

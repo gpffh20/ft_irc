@@ -37,6 +37,7 @@ SRC_FILES = main.cpp \
 			cmd/ping.cpp \
 			cmd/privmsg.cpp \
 			cmd/quit.cpp \
+			cmd/topic.cpp \
 			cmd/user.cpp
 
 SRCS = $(addprefix $(SRC_DIR), $(SRC_FILES))

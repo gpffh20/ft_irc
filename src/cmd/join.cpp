@@ -25,7 +25,7 @@ void Command::join(Client &client, std::vector<std::string> args) {
 	
 	// 클라이언트를 채널에 추가
 	channel->addClient(client);
-	
+	// 처음 들어오는 클라이언트는 오퍼레이터로 설정했다고 메세지 보내기
 	client.addChannel(channel);
 	client.addToSendBuffer(
 			":" + client.getNickname() + "!" + client.getUsername() + "@" + client.getServername() + " JOIN :"
