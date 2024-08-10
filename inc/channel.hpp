@@ -3,6 +3,7 @@
 
 #include <string>
 #include <iostream>
+#include <sstream>
 #include <algorithm>
 #include <vector>
 #include "client.hpp"
@@ -19,6 +20,8 @@ private:
     int         maxClient_;
     std::string topic_;
     std::string mode_;
+    bool topicProtected_;
+    bool inviteOnly_;
 
 public:
     Channel();
@@ -53,6 +56,7 @@ public:
 	bool        isClientOp(Client &client);
 	bool        isClientBanned(Client &client);
 	bool		isOp(std::string nickname);
+	std::string getModeString(Client& client);
 };
 
 #endif

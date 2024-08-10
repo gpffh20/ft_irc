@@ -1,10 +1,10 @@
 #include "../inc/channel.hpp"
 
-Channel::Channel() {
+Channel::Channel() : maxClient_(0), topicProtected_(false), inviteOnly_(false) {
 	std::cout << "Anonymous channel created" << std::endl;
 }
 
-Channel::Channel(std::string channelName) : channelName_(channelName) {
+Channel::Channel(std::string channelName)  : channelName_(channelName), maxClient_(0), topicProtected_(false), inviteOnly_(false) {
 	std::cout << "Registered channel created, named " << channelName_ << std::endl;
 }
 
@@ -57,7 +57,7 @@ void Channel::addClient(Client &client) {
 }
 
 void Channel::removeClient(Client &client) {
-    clientList_.erase(std::remove(clientList_.begin(), clientList_.end(), &client), clientList_.end());
+	clientList_.erase(std::remove(clientList_.begin(), clientList_.end(), &client), clientList_.end());
 }
 
 void Channel::addOp(Client &client) {
@@ -131,6 +131,53 @@ Client*	Channel::getClientByNickname(std::string nickname) {
 		}
 	}
 	return NULL;
+}
+
+std::string Channel::getModeString(Client& client) {
+	std::ostringstream modeString;
+	bool isOp = isClientOp(client);
+	bool spaceFlag = true;
+
+	// 채널 키 모드 (+k)
+	if (!channelKey_.empty()) {
+		modeString << "+k";
+		if (isOp) {
+			modeString << " " << channelKey_;
+		}
+		spaceFlag = false;
+	}
+
+	// 주제 보호 모드 (+t)
+	if (topicProtected_) {
+		if (!spaceFlag) modeString << " ";
+		modeString << "+t";
+		spaceFlag = false;
+	}
+
+	// 초대 전용 모드 (+i)
+	if (inviteOnly_) {
+		if (!spaceFlag) modeString << " ";
+		modeString << "+i";
+		spaceFlag = false;
+	}
+
+	// 사용자 수 제한 모드 (+l)
+	if (maxClient_ > 0) {
+		if (!spaceFlag) modeString << " ";
+		modeString << "+l " << maxClient_;
+		spaceFlag = false;
+	}
+
+	// 운영자 상태 (+o)
+	if (isOp) {
+		if (!spaceFlag) modeString << " ";
+		modeString << "+o";
+		for (std::vector<Client*>::const_iterator it = opUser_.begin(); it != opUser_.end(); ++it) {
+			modeString << " " << (*it)->getNickname();
+		}
+	}
+
+	return modeString.str();
 }
 
 
