@@ -133,6 +133,7 @@ Client*	Channel::getClientByNickname(std::string nickname) {
 	return NULL;
 }
 
+
 //void Channel::sendToChannel(std::string message) {
 //	(void) message;
 //	std::vector<Client *>::iterator iter = clientList_.begin();

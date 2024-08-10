@@ -1,4 +1,5 @@
 #include "../../inc/command.hpp"
+#include "../../inc/channel.hpp"
 
 std::vector<std::string> Command::parseForKICK(std::vector<std::string> args) {
 	// Rejoin tokens if ':' is found
@@ -24,56 +25,60 @@ void Command::kick(Client &client, std::vector<std::string> args) {
 		return;
 	}
 	args = parseForKICK(args);
-	std::string channelName = args[0];
-	std::string targetNickname = args[1];
-//	std::string reason = args.size() > 2 ? args[2] : "No reason given";
+	std::string channelName = args[1];
+	std::string targetNickname = args[2];
+	std::string reason = args.size() > 2 ? args[3] : "No reason given";
+	
+	// 닉네임 없음
+	std::vector<std::string> &nicknames = server_.getNicknames();
+	if (std::find(nicknames.begin(), nicknames.end(), targetNickname) == nicknames.end()) {
+		client.addToSendBuffer(
+				std::string(ERR_NOSUCHNICK) + " " + client.getNickname() + " " + targetNickname + " :No such nick\r\n");
+		return;
+	}
 	
 	// 채널 없음
 	Channel *channel = getChannelByName(channelName);
 	if (!channel) {
 		client.addToSendBuffer(
-				std::string(ERR_NOSUCHCHANNEL) + " " + client.getNickname() + " " + channelName + " :No such channel\r\n");
+				std::string(ERR_NOSUCHCHANNEL) + " " + client.getNickname() + " " + channelName
+						+ " :No such channel\r\n");
 		return;
 	}
 	
-	// 닉네임 없음
-	
 	// 내가(명령어를 친 사람) 채널에 없음
+	if (!channel->isClientInChannel(client)) {
+		client.addToSendBuffer(
+				std::string(ERR_NOTONCHANNEL) + " " + client.getNickname() + " " + channelName
+						+ " :You're not on that channel\r\n");
+		return;
+	}
 	
 	// kick 하려는 사람이 채널에 없음
+	Client *target = channel->getClientByNickname(targetNickname);
+	if (!channel->isClientInChannel(*target)) {
+		client.addToSendBuffer(
+				std::string(ERR_USERNOTINCHANNEL) + " " + client.getNickname() + " " + targetNickname + " "
+						+ channelName + " :They aren't on that channel\r\n");
+		return;
+	}
 	
 	// client가 채널의 operator가 아님
-	
-	// kick 실행
-	
-	// 채널에서 client 제거
-	
-	// client의 채널 목록에서 채널 제거
-	
-	
-
 	if (!channel->isOp(client.getNickname())) {
 		client.addToSendBuffer(std::string(ERR_CHANOPRIVSNEEDED) + " " + client.getNickname() + " " + channelName
 									   + " :You're not channel operator\r\n");
 		return;
 	}
 	
-	Client *targetClient = channel->getClientByNickname(targetNickname);
-	if (!targetClient) {
-		client.addToSendBuffer(
-				std::string(ERR_USERNOTINCHANNEL) + " " + client.getNickname() + " " + targetNickname + " " + channelName
-						+ " :They aren't on that channel\r\n");
-		return;
-	}
+	// kick 실행
+	client.addToSendBuffer(
+			":" + client.getNickname() + "!" + client.getHostname() + "@" + client.getServername() + " KICK "
+					+ channelName + targetNickname + " :" + reason + "\r\n");
 	
-//	// Send KICK message to the channel and the target client
-//	std::string kickMessage =
-//			":" + client.getNickname() + " KICK " + channelName + " " + targetNickname + " :" + reason + "\r\n";
-//	channel->sendToChannel(kickMessage);
-//	channel->broadcast(kickMessage);
-//	targetClient->addToSendBuffer(kickMessage);
-//
-//	// Remove the client from the channel
-//	channel->removeClient(targetClient);
-//	targetClient->removeChannel(channelName);
+	
+	// 채널에서 client 제거
+	channel->removeClient(*target);
+	
+	// client의 채널 목록에서 채널 제거
+	target->removeChannel(channel);
 }
