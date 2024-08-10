@@ -9,7 +9,8 @@ Client::Client(int socket_fd)
 		  pass_(false),
 		  nick_(false),
 		  user_(false),
-		  error_(false) {}
+		  error_(false),
+		  invisible_(false) {}
 
 Client::~Client() {}
 
@@ -138,6 +139,14 @@ void Client::setError(bool error) {
 
 bool Client::getError() const {
 	return error_;
+}
+
+bool Client::getInvisible() const {
+	return invisible_;
+}
+
+void Client::setInvisible(bool invisible) {
+	invisible_ = invisible;
 }
 
 // new addToSendBuffer

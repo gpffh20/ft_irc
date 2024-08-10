@@ -11,26 +11,46 @@ void Command::mode(Client& client, std::vector<std::string> args) {
 		return;
 	}
 
+	std::string target = args[1];
+
+	// 사용자 모드 설정이 필요한 경우 (nickname 모드 처리)
+	if (target[0] != '#') { // 채널 이름이 아니면 사용자 모드로 간주
+		if (args.size() < 3) { // 모드 변경 파라미터 확인
+			client.addToSendBuffer(std::string(ERR_NEEDMOREPARAMS) + " " + client.getNickname() + " MODE :Not enough parameters\n");
+			return;
+		}
+		std::string mode = args[2];
+		if ((mode == "+i" || mode == "-i") && args[1] == client.getNickname()) {
+			// Invisible 모드 설정 또는 해제
+			bool setInvisible = (mode == "+i");
+			client.setInvisible(setInvisible);
+			client.addToSendBuffer("MODE " + client.getNickname() + " " + mode + "\n");
+			return;
+		} else {
+			client.addToSendBuffer(std::string(ERR_USERSDONTMATCH) + " " + client.getNickname() + " :Cannot change mode for other users\n");
+			return;
+		}
+	}
+
 	// 채널 이름을 확인하고 해당 채널이 있는지 검사
-	std::string channelName = args[1];
-	if (Server::getChannels().find(channelName) == Server::getChannels().end()) {
-		client.addToSendBuffer(std::string(ERR_NOSUCHCHANNEL) + " " + client.getNickname() + " " + channelName + " :No such channel\n");
+	if (Server::getChannels().find(target) == Server::getChannels().end()) {
+		client.addToSendBuffer(std::string(ERR_NOSUCHCHANNEL) + " " + client.getNickname() + " " + target + " :No such channel\n");
 		return;
 	}
 
 	// 채널 객체 참조
-	Channel& channel = Server::getChannels()[channelName];
+	Channel& channel = Server::getChannels()[target];
 
 	// 모드를 조회하는 경우 (인자가 2개일 때)
 	if (args.size() == 2) {
 		std::string modes = channel.getModeString(client);
-		client.addToSendBuffer(std::string(RPL_CHANNELMODEIS) + " " + client.getNickname() + " " + channelName + " " + modes + "\n");
+		client.addToSendBuffer(std::string(RPL_CHANNELMODEIS) + " " + client.getNickname() + " " + target + " " + modes + "\n");
 		return;
 	}
 
 	// 클라이언트가 채널의 운영자인지 확인
 	if (!channel.isClientOp(client)) {
-		client.addToSendBuffer(std::string(ERR_CHANOPRIVSNEEDED) + " " + client.getNickname() + " " + channelName + " :You're not channel operator\n");
+		client.addToSendBuffer(std::string(ERR_CHANOPRIVSNEEDED) + " " + client.getNickname() + " " + target + " :You're not channel operator\n");
 		return;
 	}
 

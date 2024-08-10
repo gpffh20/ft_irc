@@ -29,6 +29,7 @@ class Client {
 	bool getUser() const;
 	bool getEnd() const;
 	bool getError() const;
+	bool getInvisible() const;
 	const std::string &getHostname() const;
 	const std::string &getServername() const;
 	std::vector<Channel*> getChannels();
@@ -46,6 +47,7 @@ class Client {
 	void setUser(bool user);
 	void setEnd(bool end);
 	void setError(bool error);
+	void setInvisible(bool invisible);
 	
 	// send
 	void addToSendBuffer(const std::string &message);
@@ -77,6 +79,7 @@ class Client {
 	bool nick_;
 	bool user_;
 	bool error_;
+	bool invisible_;
 
 };
 
