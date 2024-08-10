@@ -1,5 +1,4 @@
 #include "../../inc/command.hpp"
-#include "../../inc/channel.hpp"
 
 std::vector<std::string> Command::parseForKICK(std::vector<std::string> args) {
 	// Rejoin tokens if ':' is found
