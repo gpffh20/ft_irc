@@ -26,20 +26,28 @@ void Command::invite(Client& client, std::vector<std::string> args) {
 				ERR_NOTONCHANNEL + client.getNickname() + " " + channel_name + " :You're not on that channel\r\n");
 		return;
 	}
-	
-	 // 클라이언트 목록을 닉네임 기준으로 찾음
-    Client* target_client = NULL;
-    std::map<int, Client>::iterator it2;
-    for (it2 = server_.getClients().begin(); it2 != server_.getClients().end(); ++it2) {
-        if (it2->second.getNickname() == nickname) {
-            target_client = &it2->second;
-            break;
-        }
-    }
-    
-    if (target_client == NULL) {
-        client.addToSendBuffer(ERR_NOSUCHNICK + client.getNickname() + " " + nickname + " :No such nick/channel\r\n");
-        return;
-    }
-    target_client->addToSendBuffer(":" + client.getNickname() + " INVITE " + nickname + " " + channel_name + "\r\n");
+
+	// 대상 클라이언트 찾기
+	Client* target_client = NULL;
+	std::map<int, Client>::iterator it_client;
+	for (it_client = server_.getClients().begin(); it_client != server_.getClients().end(); ++it_client) {
+		if (it_client->second.getNickname() == nickname) {
+			target_client = &it_client->second;
+			break;
+		}
+	}
+
+	if (target_client == NULL) {
+		client.addToSendBuffer(std::string(ERR_NOSUCHNICK) + " " + client.getNickname() + " " + nickname + " :No such nick/channel\r\n");
+		return;
+	}
+
+	// 초대 상태 업데이트
+	if (!it->second.isClientInvited(*target_client)) {
+		it->second.inviteClient(*target_client);
+	}
+
+	// 초대 메시지 전송
+	target_client->addToSendBuffer(":" + client.getNickname() + "!" + client.getUsername() + "@" + client.getHostname() + " INVITE " + nickname + " " + channel_name + "\r\n");
+	client.addToSendBuffer(":" + client.getNickname() + " INVITE " + nickname + " " + channel_name + "\r\n");
 }
