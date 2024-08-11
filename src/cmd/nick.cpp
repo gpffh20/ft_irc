@@ -13,7 +13,7 @@ void Command::nick(Client &client, std::vector<std::string> args) {
 	}
 	std::string nickname = args[1];
 	// 닉네임 중복
-	if (isNicknameExist(nickname, client.getFd())) {
+	while (isNicknameExist(nickname, client.getFd())) {
 		if (client.getNick()) {
 			client.addToSendBuffer(
 					std::string(ERR_NICKNAMEINUSE) + " " + nickname + " :Nickname is already in use\r\n");
