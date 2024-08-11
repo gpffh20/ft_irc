@@ -5,105 +5,85 @@
 
 // 채널 모드를 처리하는 함수
 void Command::mode(Client &client, std::vector<std::string> args) {
-	// MODE <channel> <option> <client>
-	// 인자가 충분한지 확인
 	if (args.size() < 2) {
-		client.addToSendBuffer(
-				std::string(ERR_NEEDMOREPARAMS) + " " + client.getNickname() + " MODE :Not enough parameters\n");
+		client.addToSendBuffer("461 " + client.getNickname() + " MODE :Not enough parameters\n");
 		return;
 	}
-	
-	// target = channelName
+
 	std::string target = args[1];
 	bool isProcessed = false;
-	
-	// 사용자 모드 설정이 필요한 경우 (nickname 모드 처리)
-	if (target[0] != '#') { // 채널 이름이 아니면 사용자 모드로 간주
-		if (args.size() < 3) { // 모드 변경 파라미터 확인
-			client.addToSendBuffer(
-					std::string(ERR_NEEDMOREPARAMS) + " " + client.getNickname() + " MODE :Not enough parameters\n");
+
+	// 사용자 모드 설정
+	if (target[0] != '#') {
+		if (args.size() < 3) {
+			client.addToSendBuffer("461 " + client.getNickname() + " MODE :Not enough parameters\n");
 			return;
 		}
 		std::string mode = args[2];
 		if ((mode == "+i" || mode == "-i") && args[1] == client.getNickname()) {
-			// Invisible 모드 설정 또는 해제
-			bool setInvisible = (mode == "+i");
-			client.setInvisible(setInvisible);
+			client.setInvisible(mode == "+i");
 			client.addToSendBuffer("MODE " + client.getNickname() + " " + mode + "\n");
 			return;
 		} else {
-			client.addToSendBuffer(std::string(ERR_USERSDONTMATCH) + " " + client.getNickname()
-										   + " :Cannot change mode for other users\n");
+			client.addToSendBuffer("502 " + client.getNickname() + " :Cannot change mode for other users\n");
 			return;
 		}
 	}
-	
-	// 채널 이름을 확인하고 해당 채널이 있는지 검사
+
+	// 채널 모드 설정
 	if (Server::getChannels().find(target) == Server::getChannels().end()) {
-		client.addToSendBuffer(
-				std::string(ERR_NOSUCHCHANNEL) + " " + client.getNickname() + " " + target + " :No such channel\n");
+		client.addToSendBuffer("403 " + client.getNickname() + " " + target + " :No such channel\n");
 		return;
 	}
-	
-	// 채널 객체 참조
+
 	Channel &channel = Server::getChannels()[target];
-	
-	// 모드를 조회하는 경우 (인자가 2개일 때)
 	if (args.size() == 2) {
 		std::string modes = channel.getModeString(client);
-		client.addToSendBuffer(
-				std::string(RPL_CHANNELMODEIS) + " " + client.getNickname() + " " + target + " " + modes + "\n");
+		client.addToSendBuffer("324 " + client.getNickname() + " " + target + " " + modes + "\n");
 		return;
 	}
-	
-	// 클라이언트가 채널의 운영자인지 확인
+
 	if (!channel.isClientOp(client)) {
-		client.addToSendBuffer(std::string(ERR_CHANOPRIVSNEEDED) + " " + client.getNickname() + " " + target
-									   + " :You're not channel operator\n");
+		client.addToSendBuffer("482 " + client.getNickname() + " " + target + " :You're not channel operator\n");
 		return;
 	}
-	
-	// 모드 문자열과 초기 설정
+
 	std::string modes = args[2];
 	size_t argIndex = 3;
+	std::string modeChangeMessage = ":" + client.getNickname() + "!" + client.getUsername() + "@" + client.getHostname() + " MODE " + target;
+
 	char currentSign = 0;
-	// param = 모드 적용 대상 user
 	std::string param;
-	
-	// 모드 문자열을 순회하면서 각 모드 처리
-	for (size_t i = 0; i < modes.length(); ++i) {
+	bool modeParamRequired = false;
+
+	for (size_t i = 0; i < modes.size(); ++i) {
 		char mode = modes[i];
-		// 현재 모드 변경 사인 (+, -) 설정
 		if (mode == '+' || mode == '-') {
 			currentSign = mode;
 			continue;
 		}
-		
-		// 모드가 추가 인자를 필요로 하는 경우 인자 가져오기
-		if ((mode == 'k' && currentSign == '+') || mode == 'l' || mode == 'o') {
+		if ((mode == 'k' && currentSign == '+') || mode == 'o' || mode == 'l') {
+			modeParamRequired = true;
 			if (argIndex < args.size()) {
 				param = args[argIndex++];
 			} else {
-				client.addToSendBuffer(std::string(ERR_NEEDMOREPARAMS) + " " + client.getNickname()
-											   + " MODE :Parameter needed for mode " + std::string(1, mode) + "\n");
+				client.addToSendBuffer(
+					"461 " + client.getNickname() + " MODE :Parameter needed for mode " + std::string(1, mode) + "\n");
 				return;
 			}
 		}
-		
+
 		if (processMode(client, channel, mode, currentSign, param)) {
 			isProcessed = true;
+			modeChangeMessage += " " + std::string(1, currentSign) + std::string(1, mode);
+			if (modeParamRequired) {
+				modeChangeMessage += " " + param;
+			}
 		}
 	}
-	
-	// 모드 변경 메시지 구성 및 방송
+
 	if (isProcessed) {
-		std::string modeChangeMessage =
-				":" + client.getNickname() + "!" + client.getUsername() + "@" + client.getHostname() + " MODE " + param
-						+ " " + modes;
-		// gykoh: 이 부분은 필요 없는 것 같아서 주석 처리했습니다.
-//		for (size_t i = 3; i < args.size(); ++i) {
-//			modeChangeMessage += " " + args[i];
-//		}
+		modeChangeMessage += "\r\n";
 		channel.sendToChannel(modeChangeMessage);
 	}
 }
@@ -112,37 +92,43 @@ void Command::mode(Client &client, std::vector<std::string> args) {
 bool Command::processMode(Client &client, Channel &channel, char mode, char sign, const std::string &param) {
 	bool isAdd = (sign == '+');
 	switch (mode) {
-		case 'i': channel.setInviteOnly(isAdd);
+		case 'i':
+			channel.setInviteOnly(isAdd);
 			return true;
-		case 't': channel.setTopicProtected(isAdd);
+		case 't':
+			channel.setTopicProtected(isAdd);
 			return true;
 		case 'k':
-			if (isAdd && !param.empty()) {
-				channel.setChannelKey(param);
-				return true;
-			} else if (!isAdd) {
+			if (isAdd) {
+				if (!param.empty()) {
+					channel.setChannelKey(param);
+					return true;
+				} else {
+					client.addToSendBuffer("461 " + client.getNickname() + " :Key is required for +k mode\n");
+					return false;
+				}
+			} else {
 				channel.setChannelKey("");
 				return true;
 			}
-			break;
 		case 'l':
 			if (isAdd) {
-				int limit = atoi(param.c_str());
+				int limit = std::stoi(param);
 				if (limit > 0) {
 					channel.setMaxClient(limit);
 					return true;
 				} else {
-					client.addToSendBuffer(std::string(ERR_KEYSET) + " " + client.getNickname() + " :Invalid limit\n");
+					client.addToSendBuffer("461 " + client.getNickname() + " :Invalid limit for +l mode\n");
+					return false;
 				}
 			} else {
 				channel.setMaxClient(0);
 				return true;
 			}
-			break;
 		case 'o':
 			if (param.empty()) {
-				client.addToSendBuffer(std::string(ERR_NOSUCHNICK) + " " + client.getNickname()
-											   + " :Nickname required for operator mode\n");
+				client.addToSendBuffer("461 " + client.getNickname() + " :Nickname required for +o or -o mode\n");
+				return false;
 			} else {
 				Client *opClient = channel.getClientByNickname(param);
 				if (opClient != NULL) {
@@ -153,11 +139,12 @@ bool Command::processMode(Client &client, Channel &channel, char mode, char sign
 					}
 					return true;
 				} else {
-					client.addToSendBuffer(std::string(ERR_NOSUCHNICK) + " " + client.getNickname() + " " + param
-												   + " :No such nick/channel\n");
+					client.addToSendBuffer("401 " + client.getNickname() + " " + param + " :No such nick/channel\n");
+					return false;
 				}
 			}
-			break;
+		default:
+			client.addToSendBuffer("472 " + client.getNickname() + " " + std::string(1, mode) + " :is unknown mode char to me\n");
+			return false;
 	}
-	return false;
 }
