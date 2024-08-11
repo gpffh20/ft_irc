@@ -6,11 +6,12 @@ void Command::join(Client &client, std::vector<std::string> args) {
 		client.addToSendBuffer(NEEDMOREPARAMS("JOIN"));
 		return;
 	}
-	//TODO: key 처리
 
 	std::string channelName = args[1];
+	// 사용자가 제공한 비밀번호를 저장
+	std::string keyProvided = args.size() > 2 ? args[2] : "";
 	Channel *channel;
-	
+
 	if (server_.getChannels().find(channelName) == server_.getChannels().end()) {
 		std::cout << "Channel does not exist, creating new channel " << channelName << std::endl;
 		// 채널 생성
@@ -28,6 +29,12 @@ void Command::join(Client &client, std::vector<std::string> args) {
 		// 초대 전용 모드 확인 및 초대받지 않은 클라이언트 거부
 		if (channel->getInviteOnly() && !channel->isClientInvited(client)) {
 			client.addToSendBuffer(std::string(ERR_INVITEONLYCHAN) + " " + client.getNickname() + " " + channelName + " :Cannot join channel (invite only)\r\n");
+			return;
+		}
+
+		// 비밀번호 모드 확인 및 비밀번호가 맞는지 확인
+		if (!channel->getChannelKey().empty() && channel->getChannelKey() != keyProvided) {
+			client.addToSendBuffer(std::string(ERR_BADCHANNELKEY) + " " + client.getNickname() + " " + channelName + " :Cannot join channel (Incorrect channel key)\r\n");
 			return;
 		}
 
