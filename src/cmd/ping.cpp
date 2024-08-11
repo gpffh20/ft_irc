@@ -1,11 +1,15 @@
 #include "../../inc/command.hpp"
 
 void Command::ping(Client& client, std::vector<std::string> tokens) {
-		if (tokens.size() == 1) {
-			client.addToSendBuffer(std::string(ERR_NOORIGIN) + " " + client.getNickname() + " :No origin specified\r\n");
-		} else if (tokens.size() == 2) {
-			client.addToSendBuffer("PONG " + tokens[1] + "\r\n");
-		} else {
-			client.addToSendBuffer("PONG " + tokens[1] + " " + tokens[2] + "\r\n");
+	if (tokens.size() < 2) {
+		client.addToSendBuffer(std::string("409 ") + client.getNickname() + " :No origin specified\r\n");
+	} else {
+		std::string response = "PONG ";
+		response += tokens[1];
+		if (tokens.size() > 2) {
+			response += " " + tokens[2];
 		}
+		response += "\r\n";
+		client.addToSendBuffer(response);
+	}
 }
