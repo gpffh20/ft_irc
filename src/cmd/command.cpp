@@ -14,7 +14,7 @@ void Command::run(Client &client, std::vector<std::string> args) {
 		else if (command == "USER")
 			user(client, args);
 		else {
-			client.addToSendBuffer(ERR_NOTREGISTERED + client.getNickname() + " :You have not registered\r\n");
+			client.addToSendBuffer(std::string(ERR_NOTREGISTERED) + " " + client.getNickname() + " " + command + " :You have not registered\r\n");
 			client.setError(true);
 		}
 		if (client.getError())

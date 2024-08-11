@@ -59,8 +59,7 @@ void Server::run() {
 				i--;
 			}
 		}
-		// 버퍼에 쌓인 메세지 전송
-//		sendToClients();
+		sendToClients();
 	}
 }
 
@@ -250,7 +249,7 @@ void Server::handleCommands(Client &client) {
 	client.clearMessage();
 	// 버퍼에 쌓인 메세지 전송
 //	sendToClient();
-	client.sendMessage();
+//	client.sendMessage();
 }
 
 void Server::sendToClient(int client_fd, const std::string &message) {

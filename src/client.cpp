@@ -55,11 +55,11 @@ void Client::setIsRegistered(bool is_registered) {
 }
 
 // old addToSendBuffer
-//void Client::addToSendBuffer(const std::string &message) {
-//	std::cout << ">> " << message << std::endl;
-//	sendbuf_ += message + "\r\n";
-//	// std::cout << "sendbuf: " << sendbuf_ << std::endl;
-//}
+void Client::addToSendBuffer(const std::string &message) {
+	std::cout << ">> " << message << std::endl;
+	sendbuf_ += message + "\r\n";
+	// std::cout << "sendbuf: " << sendbuf_ << std::endl;
+}
 
 void Client::setPass(bool pass) {
 	pass_ = pass;
@@ -86,16 +86,16 @@ bool Client::getUser() const {
 }
 
 // old sendMessage
-//void Client::sendMessage() {
-//	if (!sendbuf_.empty()) {
-//		// std::cout << "send to client : " << sendbuf_ << std::endl;
-//		const char *msg = sendbuf_.c_str();
-//		send(fd, msg, sendbuf_.size(), 0);
-//		sendbuf_.clear();
-//		// std::cout << "sendbuf clear" << std::endl;
-//		// std::cout << "sendbuf: " << sendbuf_ << std::endl;
-//	}
-//}
+void Client::sendMessage() {
+	if (!sendbuf_.empty()) {
+		// std::cout << "send to client : " << sendbuf_ << std::endl;
+		const char *msg = sendbuf_.c_str();
+		send(fd, msg, sendbuf_.size(), 0);
+		sendbuf_.clear();
+		// std::cout << "sendbuf clear" << std::endl;
+		// std::cout << "sendbuf: " << sendbuf_ << std::endl;
+	}
+}
 
 const std::string &Client::getHostname() const {
 	return hostname_;
@@ -150,22 +150,22 @@ void Client::setInvisible(bool invisible) {
 }
 
 // new addToSendBuffer
-void Client::addToSendBuffer(const std::string &message) {
-	std::cout << ">> " << message << std::endl;
-	sendbuf_ += message;
-	sendMessage();  // 메시지 즉시 전송
-}
+//void Client::addToSendBuffer(const std::string &message) {
+//	std::cout << ">> " << message << std::endl;
+//	sendbuf_ += message;
+//	sendMessage();  // 메시지 즉시 전송
+//}
 
 // new sendMessage
-void Client::sendMessage() {
-	if (!sendbuf_.empty()) {
-		const char *msg = sendbuf_.c_str();
-		ssize_t sent = send(fd, msg, sendbuf_.size(), 0);
-		if (sent > 0) {
-			sendbuf_.erase(0, sent);
-		}
-		if (sent < 0) {
-			// 오류 처리
-		}
-	}
-}
+//void Client::sendMessage() {
+//	if (!sendbuf_.empty()) {
+//		const char *msg = sendbuf_.c_str();
+//		ssize_t sent = send(fd, msg, sendbuf_.size(), 0);
+//		if (sent > 0) {
+//			sendbuf_.erase(0, sent);
+//		}
+//		if (sent < 0) {
+//			// 오류 처리
+//		}
+//	}
+//}
