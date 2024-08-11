@@ -27,6 +27,11 @@ void Command::join(Client &client, std::vector<std::string> args) {
 	} else {
 		std::cout << "Channel exists, joining channel " << channelName << std::endl;
 		channel = &server_.getChannels()[channelName];
+		// 초대 전용 모드 확인 및 초대받지 않은 클라이언트 거부
+		if (channel->getInviteOnly() && !channel->isClientInvited(client)) {
+			client.addToSendBuffer(std::string(ERR_INVITEONLYCHAN) + " " + client.getNickname() + " " + channelName + " :Cannot join channel (invite only)\r\n");
+			return;
+		}
 	}
 	
 	// 클라이언트를 채널에 추가
