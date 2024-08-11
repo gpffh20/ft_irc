@@ -6,6 +6,9 @@ void Command::join(Client &client, std::vector<std::string> args) {
 		client.addToSendBuffer(NEEDMOREPARAMS("JOIN"));
 		return;
 	}
+	// TODO: key 처리
+	
+	// TODO: invite 처리
 	
 	std::string channelName = args[1];
 	Channel *channel;
