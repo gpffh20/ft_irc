@@ -24,7 +24,6 @@ void Command::topic(Client &client, std::vector<std::string> args) {
 		return;
 	}
 	std::string channelName = args[1];
-	std::string topic;
 //	채널 없음
 	Channel *channel = getChannelByName(channelName);
 	if (!channel) {
@@ -37,19 +36,18 @@ void Command::topic(Client &client, std::vector<std::string> args) {
 			client.addToSendBuffer( "331 " + client.getNickname() + " " + channelName + " :No topic is set\r\n");
 		} else {
 			client.addToSendBuffer("332 " + client.getNickname() + " " + channelName + " :" + channel->getTopic() + "\r\n");
-			// topic 작성자 및 생성 시간 와야함
 		}
 		return ;
 	}
+	// TODO: topic mode 인데 오퍼레이터 권한이 없을 때
 	
 	channel->setTopic(args[2]);
+	std::cout << "TOPIC: " << channel->getTopic() << std::endl;
 	std::vector<Client *> clientList = channel->getClientList();
 	std::string msg =
 			":" + client.getNickname() + "!" + client.getHostname() + "@" + client.getServername() + " TOPIC "
 					+ channelName + " :" + args[2] + "\r\n";
 	for (std::vector<Client *>::iterator it = clientList.begin(); it != clientList.end(); ++it) {
-		if ((*it)->getNickname() != client.getNickname()) {
 			(*it)->addToSendBuffer(msg);
-		}
 	}
 }
