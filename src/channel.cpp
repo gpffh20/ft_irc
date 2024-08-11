@@ -152,49 +152,42 @@ Client*	Channel::getClientByNickname(std::string nickname) {
 std::string Channel::getModeString(Client& client) {
 	std::ostringstream modeString;
 	bool isOp = isClientOp(client);
-	bool spaceFlag = true;
+	bool spaceFlag = false;
 
-	// 채널 키 모드 (+k)
 	if (!channelKey_.empty()) {
-		modeString << "+k";
+		modeString << (spaceFlag ? " " : "") << "+k";
 		if (isOp) {
 			modeString << " " << channelKey_;
 		}
-		spaceFlag = false;
+		spaceFlag = true;
 	}
 
-	// 주제 보호 모드 (+t)
 	if (topicProtected_) {
-		if (!spaceFlag) modeString << " ";
-		modeString << "+t";
-		spaceFlag = false;
+		modeString << (spaceFlag ? " " : "") << "+t";
+		spaceFlag = true;
 	}
 
-	// 초대 전용 모드 (+i)
 	if (inviteOnly_) {
-		if (!spaceFlag) modeString << " ";
-		modeString << "+i";
-		spaceFlag = false;
+		modeString << (spaceFlag ? " " : "") << "+i";
+		spaceFlag = true;
 	}
 
-	// 사용자 수 제한 모드 (+l)
 	if (maxClient_ > 0) {
-		if (!spaceFlag) modeString << " ";
-		modeString << "+l " << maxClient_;
-		spaceFlag = false;
+		modeString << (spaceFlag ? " " : "") << "+l " << maxClient_;
+		spaceFlag = true;
 	}
 
-	// 운영자 상태 (+o)
 	if (isOp) {
-		if (!spaceFlag) modeString << " ";
-		modeString << "+o";
-		for (std::vector<Client*>::const_iterator it = opUser_.begin(); it != opUser_.end(); ++it) {
+		modeString << (spaceFlag ? " " : "") << "+o";
+		std::vector<Client*>::const_iterator it;
+		for (it = opUser_.begin(); it != opUser_.end(); ++it) {
 			modeString << " " << (*it)->getNickname();
 		}
 	}
 
 	return modeString.str();
 }
+
 
 void Channel::sendToChannel(std::string& message) {
 	for (std::vector<Client*>::iterator it = clientList_.begin(); it != clientList_.end(); ++it) {
