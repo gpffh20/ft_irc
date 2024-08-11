@@ -84,6 +84,16 @@ void Channel::removeOp(Client &client) {
 	opUser_.erase(std::remove(opUser_.begin(), opUser_.end(), &client), opUser_.end());
 }
 
+void Channel::inviteClient(Client &client) {
+	if (std::find(invitedClients_.begin(), invitedClients_.end(), &client) == invitedClients_.end()) {
+		invitedClients_.push_back(&client);
+	}
+}
+
+bool Channel::isClientInvited(Client &client) {
+	return std::find(invitedClients_.begin(), invitedClients_.end(), &client) != invitedClients_.end();
+}
+
 void Channel::banUser(Client &client) {
 	bannedUser_.push_back(&client);
 	// remove from client list
