@@ -18,6 +18,9 @@ void Command::join(Client &client, std::vector<std::string> args) {
 		channel = &server_.getChannels()[channelName];
 		// Assign the first user as an operator
 		channel->addOp(client);
+		client.addToSendBuffer(
+				":" + client.getNickname() + "!" + client.getUsername() + "@" + client.getHostname() + " MODE "
+						+ channelName + " +o " + client.getNickname() + "\r\n");
 	} else {
 		std::cout << "Channel exists, joining channel " << channelName << std::endl;
 		channel = &server_.getChannels()[channelName];
@@ -25,7 +28,6 @@ void Command::join(Client &client, std::vector<std::string> args) {
 	
 	// 클라이언트를 채널에 추가
 	channel->addClient(client);
-	// 처음 들어오는 클라이언트는 오퍼레이터로 설정했다고 메세지 보내기
 	client.addChannel(channel);
 	client.addToSendBuffer(
 			":" + client.getNickname() + "!" + client.getUsername() + "@" + client.getServername() + " JOIN :"
@@ -35,13 +37,14 @@ void Command::join(Client &client, std::vector<std::string> args) {
 	std::vector < Client * > clientList = channel->getClientList();
 	std::string userList;
 	for (std::vector<Client *>::iterator it = clientList.begin(); it != clientList.end(); it++) {
-		if (!userList.empty()) {
+		if (channel->isClientOp(**it))
+			userList += "@";
+		userList += (*it)->getNickname();
+		if (it != clientList.end() - 1) {
 			userList += " ";
 		}
-		userList += (*it)->getNickname() + " ";
 	}
-	client.addToSendBuffer(
-			"353 " + client.getNickname() + " = " + channelName + " :" + userList + "\r\n");
+	client.addToSendBuffer("353 " + client.getNickname() + " = " + channelName + " :" + userList + "\r\n");
 	client.addToSendBuffer(
 			"366 " + client.getNickname() + " " + channelName + " :End of /NAMES list.\r\n");
 	

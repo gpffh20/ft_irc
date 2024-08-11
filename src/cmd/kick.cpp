@@ -63,7 +63,7 @@ void Command::kick(Client &client, std::vector<std::string> args) {
 	}
 	
 	// client가 채널의 operator가 아님
-	if (!channel->isOp(client.getNickname())) {
+	if (!channel->isClientOp(client)) {
 		client.addToSendBuffer(std::string(ERR_CHANOPRIVSNEEDED) + " " + client.getNickname() + " " + channelName
 									   + " :You're not channel operator\r\n");
 		return;

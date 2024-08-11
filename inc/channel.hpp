@@ -59,7 +59,6 @@ public:
     bool        isClientInChannel(Client &client);
 	bool        isClientOp(Client &client);
 	bool        isClientBanned(Client &client);
-	bool		isOp(std::string nickname);
 	std::string getModeString(Client& client);
 };
 

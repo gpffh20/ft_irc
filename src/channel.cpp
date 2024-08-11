@@ -69,9 +69,6 @@ void Channel::setTopicProtected(bool topicProtected) {
 }
 
 void Channel::addClient(Client &client) {
-	if (clientList_.size() == 0) {
-		opUser_.push_back(&client);
-	}
 	clientList_.push_back(&client);
 }
 
@@ -132,15 +129,15 @@ void Channel::removeUser(std::string nickname) {
 	}
 }
 
-bool Channel::isOp(std::string nickname) {
-	std::vector<Client *>::iterator iter = opUser_.begin();
-	for (; iter != opUser_.end(); iter++) {
-		if ((*iter)->getNickname() == nickname) {
-			return true;
-		}
-	}
-	return false;
-}
+//bool Channel::isOp(std::string nickname) {
+//	std::vector<Client *>::iterator iter = opUser_.begin();
+//	for (; iter != opUser_.end(); iter++) {
+//		if ((*iter)->getNickname() == nickname) {
+//			return true;
+//		}
+//	}
+//	return false;
+//}
 
 Client*	Channel::getClientByNickname(std::string nickname) {
 	std::vector<Client *>::iterator iter = clientList_.begin();
