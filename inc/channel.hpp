@@ -15,6 +15,7 @@ private:
     std::vector<Client *> clientList_;
     std::vector<Client *> bannedUser_;
     std::vector<Client *> opUser_;
+    std::vector<Client*> invitedClients_;
     std::string channelKey_;
     std::string channelName_;
     int         maxClient_;
@@ -47,6 +48,8 @@ public:
 	void        removeClient(Client &client);
     void        addOp(Client &client);
     void        removeOp(Client &client);
+    void        inviteClient(Client &client);
+    bool        isClientInvited(Client &client);
     void        banUser(Client &client);
     void        unbanUser(Client &client);
     void        kickUser(Client &client);
