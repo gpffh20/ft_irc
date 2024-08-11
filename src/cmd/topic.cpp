@@ -33,14 +33,17 @@ void Command::topic(Client &client, std::vector<std::string> args) {
 //	/topic
 	if (args.size() == 2) {
 		if (channel->getTopic().empty()) {
-			client.addToSendBuffer( "331 " + client.getNickname() + " " + channelName + " :No topic is set\r\n");
+			client.addToSendBuffer("331 " + client.getNickname() + " " + channelName + " :No topic is set\r\n");
 		} else {
 			client.addToSendBuffer("332 " + client.getNickname() + " " + channelName + " :" + channel->getTopic() + "\r\n");
 		}
 		return ;
 	}
-	// TODO: topic mode 인데 오퍼레이터 권한이 없을 때
-	
+	// topic mode 인데 오퍼레이터 권한이 없을 때
+	if (channel->getTopicProtected() && !channel->isClientOp(client)) {
+		client.addToSendBuffer(std::string(ERR_CHANOPRIVSNEEDED) + " " + client.getNickname() + " " + channelName + " :You're not channel operator\r\n");
+		return;
+	}
 	channel->setTopic(args[2]);
 	std::cout << "TOPIC: " << channel->getTopic() << std::endl;
 	std::vector<Client *> clientList = channel->getClientList();
