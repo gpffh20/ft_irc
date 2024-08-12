@@ -62,8 +62,16 @@ void Command::mode(Client &client, std::vector<std::string> args) {
 			currentSign = mode;
 			continue;
 		}
-		if ((mode == 'k' && currentSign == '+') || mode == 'o' || mode == 'l') {
+		if (mode == 'l') {
+			modeParamRequired = (currentSign == '+');
+		} else if (mode == 'k' && currentSign == '+') {
 			modeParamRequired = true;
+		} else if (mode == 'o') {
+			modeParamRequired = true;
+		} else {
+			modeParamRequired = false;
+		}
+		if (modeParamRequired) {
 			if (argIndex < args.size()) {
 				param = args[argIndex++];
 			} else {
@@ -113,12 +121,17 @@ bool Command::processMode(Client &client, Channel &channel, char mode, char sign
 			}
 		case 'l':
 			if (isAdd) {
-				int limit = std::stoi(param);
-				if (limit > 0) {
-					channel.setMaxClient(limit);
-					return true;
+				if (!param.empty()) {
+					int limit = std::stoi(param);
+					if (limit > 0) {
+						channel.setMaxClient(limit);
+						return true;
+					} else {
+						client.addToSendBuffer("461 " + client.getNickname() + " :Invalid limit for +l mode\n");
+						return false;
+					}
 				} else {
-					client.addToSendBuffer("461 " + client.getNickname() + " :Invalid limit for +l mode\n");
+					client.addToSendBuffer("461 " + client.getNickname() + " :Parameter needed for mode +l\n");
 					return false;
 				}
 			} else {
