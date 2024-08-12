@@ -51,6 +51,10 @@ void Command::join(Client &client, std::vector<std::string> args) {
 	client.addToSendBuffer(
 			":" + client.getNickname() + "!" + client.getUsername() + "@" + client.getServername() + " JOIN :"
 					+ channelName + "\r\n");
+
+	if (!channel->getTopic().empty()) {
+		client.addToSendBuffer("332 " + client.getNickname() + " " + channelName + " :" + channel->getTopic() + "\r\n");
+	}
 	
 	// 현재 사용자 리스트 전송
 	std::vector < Client * > clientList = channel->getClientList();
