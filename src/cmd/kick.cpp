@@ -26,7 +26,7 @@ void Command::kick(Client &client, std::vector<std::string> args) {
 	args = parseForKICK(args);
 	std::string channelName = args[1];
 	std::string targetNickname = args[2];
-	std::string reason = args.size() > 2 ? args[3] : "No reason given";
+	std::string reason = args[3].size() ? args[3] : "No reason";
 	
 	// 닉네임 없음
 	std::vector<std::string> &nicknames = server_.getNicknames();
@@ -72,12 +72,27 @@ void Command::kick(Client &client, std::vector<std::string> args) {
 	// kick 실행
 	client.addToSendBuffer(
 			":" + client.getNickname() + "!" + client.getHostname() + "@" + client.getServername() + " KICK "
-					+ channelName + targetNickname + " :" + reason + "\r\n");
+					+ channelName + " " + targetNickname + " :" + reason + "\r\n");
+
 	
+	// kick 메시지
+	std::vector < Client * > clientList = channel->getClientList();
+	std::string
+			msg = ":" + client.getNickname() + " KICK " + channelName + " " + targetNickname + " :" + reason + "\r\n";
+	for (std::vector<Client *>::iterator it = clientList.begin(); it != clientList.end(); ++it) {
+		if ((*it)->getNickname() != client.getNickname()) {
+			(*it)->addToSendBuffer(msg);
+		}
+	}
 	
 	// 채널에서 client 제거
 	channel->removeClient(*target);
 	
 	// client의 채널 목록에서 채널 제거
 	target->removeChannel(channel);
+	
+//	 TODO: 채널에 남은 client가 없으면 채널 제거
+//	if (channel->getClientList().empty()) {
+//		server_.removeChannel(channelName);
+//	}
 }
