@@ -15,7 +15,8 @@ void Command::part(Client &client, std::vector<std::string> args) {
 	// channel안에 해당 client가 없으면 error
 	std::vector<Client *> &clients = it->second.getClientList();
 	bool client_found = false;
-	for (std::vector<Client *>::iterator it_client = clients.begin(); it_client != clients.end(); ++it_client) {
+	std::vector<Client *>::iterator it_client;
+	for (it_client = clients.begin(); it_client != clients.end(); ++it_client) {
 		if ((*it_client)->getNickname() == client.getNickname()) {
 			client_found = true;
 			break;
@@ -27,13 +28,15 @@ void Command::part(Client &client, std::vector<std::string> args) {
 		return;
 	}
 
-	// 브로드캐스트 메시지 전송
+	// 브로드캐스트 메시지 전송 (자신 제외)
 	std::string partMessage = ":" + client.getNickname() + "!" + client.getUsername() + "@" + client.getHostname() + " PART " + channel_name + "\r\n";
-	it->second.sendToChannel(partMessage);
+	for (std::vector<Client *>::iterator other_client = clients.begin(); other_client != clients.end(); ++other_client) {
+		if ((*other_client)->getNickname() != client.getNickname()) {
+			(*other_client)->addToSendBuffer(partMessage);
+		}
+	}
 
-	// 클라이언트에게 PART 메시지 전송
 	client.addToSendBuffer(partMessage);
-
-    it->second.removeClient(client);
-    client.removeChannel(&it->second);
+	it->second.removeClient(client);
+	client.removeChannel(&it->second);
 }
