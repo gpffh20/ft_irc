@@ -201,9 +201,13 @@ void Server::handleClientMessages(int client_fd) {
 	
 	char buffer[1024];
 	int nbytes = read(client_fd, buffer, sizeof(buffer));
-
+	
 	if (nbytes > 0) {
 		// 데이터를 정상적으로 읽었을 때 처리
+		if (std::string(buffer, nbytes).find("CAP LS") != std::string::npos) {
+			removeClient(client_fd);
+			return;
+		}
 		try {
 			client.setMessage(std::string(buffer, nbytes));
 			handleCommands(client);
