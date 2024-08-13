@@ -38,7 +38,8 @@ class Command {
 	std::vector<std::string> parseForQUIT(std::vector<std::string> args);
 	std::vector<std::string> parseForKICK(std::vector<std::string> args);
 	std::vector<std::string> parseForTOPIC(std::vector<std::string> args);
-	
+	std::vector<std::string> parseForPART(std::vector<std::string> args);
+
 	std::string NEEDMOREPARAMS(std::string command);
 	Channel *getChannelByName(std::string channelName);
   
