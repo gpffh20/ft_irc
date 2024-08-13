@@ -168,7 +168,9 @@ void Server::removeClient(int client_fd) {
 	}
 	for (int i = 0; i < fd_count; i++) {
 		if (fds[i].fd == client_fd) {
-			fds[i] = fds[fd_count - 1];
+			if (i != fd_count - 1) {
+				fds[i] = fds[fd_count - 1];
+			}
 			fd_count--;
 			break;
 		}
@@ -212,6 +214,9 @@ void Server::handleClientMessages(int client_fd) {
 		// 클라이언트가 연결을 종료함
 		std::cout << "Client disconnected, fd: " << client_fd << std::endl;
 		removeClient(client_fd);
+	} else if (nbytes == -1) {
+		// 데이터를 아직 읽을 수 없는 상태이므로, 다음 루프로 넘어감
+		return;
 	} else {
 		// 오류 발생, poll 이벤트를 사용하여 확인
 		std::cerr << "Error reading from client, fd: " << client_fd << std::endl;
