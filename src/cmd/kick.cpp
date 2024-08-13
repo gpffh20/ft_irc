@@ -55,7 +55,7 @@ void Command::kick(Client &client, std::vector<std::string> args) {
 	
 	// kick 하려는 사람이 채널에 없음
 	Client *target = channel->getClientByNickname(targetNickname);
-	if (!channel->isClientInChannel(*target)) {
+	if (!channel->isClientInChannel(*target) || targetNickname == client.getNickname()) {
 		client.addToSendBuffer(
 				std::string(ERR_USERNOTINCHANNEL) + " " + client.getNickname() + " " + targetNickname + " "
 						+ channelName + " :They aren't on that channel\r\n");
@@ -91,8 +91,4 @@ void Command::kick(Client &client, std::vector<std::string> args) {
 	// client의 채널 목록에서 채널 제거
 	target->removeChannel(channel);
 	
-//	 TODO: 채널에 남은 client가 없으면 채널 제거
-//	if (channel->getClientList().empty()) {
-//		server_.removeChannel(channelName);
-//	}
 }
