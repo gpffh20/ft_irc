@@ -206,6 +206,10 @@ void Server::handleClientMessages(int client_fd) {
 			throw std::runtime_error("Read failed: " + std::string(strerror(errno)));
 		}
 	} else {
+		if (std::string(buffer, nbytes).find("CAP LS") != std::string::npos) {
+			removeClient(client_fd);
+			return ;
+		}
 		try {
 			client.setMessage(std::string(buffer, nbytes));
 			handleCommands(client);
@@ -258,9 +262,6 @@ void Server::handleCommands(Client &client) {
 		}
 	}
 	client.clearMessage();
-	// 버퍼에 쌓인 메세지 전송
-//	sendToClient();
-//	client.sendMessage();
 }
 
 void Server::sendToClient(int client_fd, const std::string &message) {
