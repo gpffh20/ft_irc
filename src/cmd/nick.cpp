@@ -42,13 +42,13 @@ void Command::nick(Client &client, std::vector<std::string> args) {
 			std::vector<Client*>& clients = channel.getClientList();
 			for (std::vector<Client*>::iterator it_client = clients.begin(); it_client != clients.end(); ++it_client) {
 				if ((*it_client)->getNickname() != client.getNickname()) { // 자신을 제외하고 알림
-					std::string nickChangeMsg = ":" + oldNickname + "!" + client.getUsername() + "@" + client.getHostname() + " NICK " + newNickname + "\r\n";
+					std::string nickChangeMsg = ":" + oldNickname + "!" + client.getUsername() + "@" + client.getHostname() + " NICK " + newNickname;
 					(*it_client)->addToSendBuffer(nickChangeMsg);
 				}
 			}
 		}
 	}
 
-	client.addToSendBuffer(":" + oldNickname + " NICK " + newNickname + "\r\n");
+	client.addToSendBuffer(":" + oldNickname + " NICK " + newNickname);
 	client.setNick(true);
 }

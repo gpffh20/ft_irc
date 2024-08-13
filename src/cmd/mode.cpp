@@ -91,7 +91,6 @@ void Command::mode(Client &client, std::vector<std::string> args) {
 	}
 
 	if (isProcessed) {
-		modeChangeMessage += "\r\n";
 		channel.sendToChannel(modeChangeMessage);
 	}
 }

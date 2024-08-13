@@ -51,7 +51,7 @@ void Command::privmsg(Client& client, std::vector<std::string> args) {
               (*itClient)->addToSendBuffer(
                   ":" + client.getNickname() + "!" + client.getUsername() +
                   "@" + client.getServername() + " PRIVMSG " + receiver + " :" +
-                  message + "\r\n");
+                  message);
             }
           }
         }
@@ -76,7 +76,7 @@ void Command::privmsg(Client& client, std::vector<std::string> args) {
         toClient->addToSendBuffer(":" + client.getNickname() + "!" +
                                   client.getUsername() + "@" +
                                   client.getServername() + " PRIVMSG " +
-                                  receiver + " :" + message + "\r\n");
+                                  receiver + " :" + message);
       }
     }
   }

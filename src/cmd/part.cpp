@@ -65,7 +65,7 @@ void Command::part(Client &client, std::vector<std::string> args) {
 		// 브로드캐스트 메시지 전송 (자신 제외)
 		std::string partMessage =
 				":" + client.getNickname() + "!" + client.getUsername() + "@" + client.getHostname() + " PART "
-						+ channel_name + " :" + args[args.size() - 1] + "\r\n";
+						+ channel_name + " :" + args[args.size() - 1];
 		for (it_client = clients.begin(); it_client != clients.end(); ++it_client) {
 			if ((*it_client)->getNickname() != client.getNickname()) {
 				(*it_client)->addToSendBuffer(partMessage);

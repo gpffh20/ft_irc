@@ -22,7 +22,7 @@ void Command::join(Client &client, std::vector<std::string> args) {
 		channel->addOp(client);
 		client.addToSendBuffer(
 				":" + client.getNickname() + "!" + client.getUsername() + "@" + client.getHostname() + " MODE "
-						+ channelName + " +o " + client.getNickname() + "\r\n");
+						+ channelName + " +o " + client.getNickname());
 	} else {
 		std::cout << "Channel exists, joining channel " << channelName << std::endl;
 		channel = &server_.getChannels()[channelName];
@@ -50,10 +50,10 @@ void Command::join(Client &client, std::vector<std::string> args) {
 	client.addChannel(channel);
 	client.addToSendBuffer(
 			":" + client.getNickname() + "!" + client.getUsername() + "@" + client.getServername() + " JOIN :"
-					+ channelName + "\r\n");
+					+ channelName);
 
 	if (!channel->getTopic().empty()) {
-		client.addToSendBuffer("332 " + client.getNickname() + " " + channelName + " :" + channel->getTopic() + "\r\n");
+		client.addToSendBuffer("332 " + client.getNickname() + " " + channelName + " :" + channel->getTopic());
 	}
 	
 	// 현재 사용자 리스트 전송
@@ -67,14 +67,14 @@ void Command::join(Client &client, std::vector<std::string> args) {
 			userList += " ";
 		}
 	}
-	client.addToSendBuffer("353 " + client.getNickname() + " = " + channelName + " :" + userList + "\r\n");
+	client.addToSendBuffer("353 " + client.getNickname() + " = " + channelName + " :" + userList);
 	client.addToSendBuffer(
 			"366 " + client.getNickname() + " " + channelName + " :End of /NAMES list.\r\n");
 	
 	// 채널의 다른 클라이언트에게 JOIN 메시지 방송
 	std::string joinMessage =
 			":" + client.getNickname() + "!" + client.getUsername() + "@" + client.getServername() + " JOIN :"
-					+ channelName + "\r\n";
+					+ channelName;
 	for (std::vector<Client *>::iterator it = clientList.begin(); it != clientList.end(); ++it) {
 		if ((*it)->getNickname() != client.getNickname()) {
 			(*it)->addToSendBuffer(joinMessage);
