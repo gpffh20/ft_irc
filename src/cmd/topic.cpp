@@ -30,6 +30,10 @@ void Command::topic(Client &client, std::vector<std::string> args) {
 		client.addToSendBuffer(std::string(ERR_NOSUCHCHANNEL) + " " + client.getNickname() + " " + channelName + " :No such channel\r\n");
 		return;
 	}
+	if (!channel->isClientInChannel(client)) {
+		client.addToSendBuffer(std::string(ERR_NOTONCHANNEL) + " " + client.getNickname() + " " + channelName + " :You're not on that channel\r\n");
+		return;
+	}
 //	/topic
 	if (args.size() == 2) {
 		if (channel->getTopic().empty()) {
