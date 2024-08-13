@@ -199,23 +199,23 @@ void Server::handleClientMessages(int client_fd) {
 	
 	char buffer[1024];
 	int nbytes = read(client_fd, buffer, sizeof(buffer));
-	if (nbytes <= 0) {
-		if (nbytes == 0) {
-			client.setEnd(true);
-		} else {
-			throw std::runtime_error("Read failed: " + std::string(strerror(errno))); //뭔가 문제있음 //접속 후 끊고 재접속하면 이 메시지 뜸
-		}
-	} else {
-		if (std::string(buffer, nbytes).find("CAP LS") != std::string::npos) {
-			removeClient(client_fd);
-			return ;
-		}
+
+	if (nbytes > 0) {
+		// 데이터를 정상적으로 읽었을 때 처리
 		try {
 			client.setMessage(std::string(buffer, nbytes));
 			handleCommands(client);
 		} catch (const std::exception &e) {
 			std::cerr << "Error handling command: " << e.what() << std::endl;
 		}
+	} else if (nbytes == 0) {
+		// 클라이언트가 연결을 종료함
+		std::cout << "Client disconnected, fd: " << client_fd << std::endl;
+		removeClient(client_fd);
+	} else {
+		// 오류 발생, poll 이벤트를 사용하여 확인
+		std::cerr << "Error reading from client, fd: " << client_fd << std::endl;
+		removeClient(client_fd);
 	}
 }
 
