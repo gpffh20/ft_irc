@@ -60,17 +60,17 @@ void Server::run() {
 			}
 		}
 		sendToClients();
-		bool allClientsEnded = true;
-		for (std::map<int, Client>::iterator it = clients.begin(); it != clients.end(); ++it) {
-		    if (!it->second.getEnd()) {
-		        allClientsEnded = false;
-		        break;
-		    }
-		}
-
-		if (allClientsEnded) {
-    		break;
-		}
+//		bool allClientsEnded = true;
+//		for (std::map<int, Client>::iterator it = clients.begin(); it != clients.end(); ++it) {
+//		    if (!it->second.getEnd()) {
+//		        allClientsEnded = false;
+//		        break;
+//		    }
+//		}
+//
+//		if (allClientsEnded) {
+//    		break;
+//		}
 	}
 }
 

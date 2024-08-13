@@ -74,6 +74,9 @@ void Channel::addClient(Client &client) {
 
 void Channel::removeClient(Client &client) {
 	clientList_.erase(std::remove(clientList_.begin(), clientList_.end(), &client), clientList_.end());
+	if (isClientOp(client)) {
+		removeOp(client);
+	}
 }
 
 void Channel::addOp(Client &client) {
