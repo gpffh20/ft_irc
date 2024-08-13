@@ -35,7 +35,7 @@ Server::~Server() {
 
 void Server::run() {
 	while (true) {
-		std::cout << "channel size: " << channels.size() << "\n";
+		// std::cout << "channel size: " << channels.size() << "\n";
 		// event_count
 		int poll_count = poll(fds, fd_count, -1); // 무한 대기 상태로 폴링
 		if (poll_count == -1) {
@@ -44,7 +44,7 @@ void Server::run() {
 		// event 발생한 만큼 Loop
 		for (int i = 0; i < fd_count; ++i) {
 			if (fds[i].revents & POLLIN) {
-				std::cout << "POLLIN event on fd: " << fds[i].fd << std::endl;
+				// std::cout << "POLLIN event on fd: " << fds[i].fd << std::endl;
 				if (fds[i].fd == server_fd) {
 					// 새로운 클라이언트 처리
 					handleNewConnection();
@@ -203,7 +203,7 @@ void Server::handleClientMessages(int client_fd) {
 		if (nbytes == 0) {
 			client.setEnd(true);
 		} else {
-			throw std::runtime_error("Read failed: " + std::string(strerror(errno)));
+			throw std::runtime_error("Read failed: " + std::string(strerror(errno))); //뭔가 문제있음 //접속 후 끊고 재접속하면 이 메시지 뜸
 		}
 	} else {
 		try {

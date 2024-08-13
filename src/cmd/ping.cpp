@@ -5,7 +5,7 @@ void Command::ping(Client& client, std::vector<std::string> tokens) {
 		client.addToSendBuffer(std::string("409 ") + client.getNickname() + " :No origin specified\r\n");
 	} else {
 		std::string response = "PONG ";
-		response += tokens[1];
+		response += "localhost";
 		if (tokens.size() > 2) {
 			response += " " + tokens[2];
 		}
