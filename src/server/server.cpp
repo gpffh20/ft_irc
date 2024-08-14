@@ -200,7 +200,19 @@ void Server::handleClientMessages(int client_fd) {
 	Client &client = clients.find(client_fd)->second;
 	
 	char buffer[1024];
-	int nbytes = read(client_fd, buffer, sizeof(buffer));
+	int nbytes;
+	std::string command;
+	
+	while ((nbytes = read(client_fd, buffer, sizeof(buffer))) > 0 ) {
+		command.append(buffer, nbytes);
+		
+		if (command.find("\r\n") != std::string::npos) {
+			break;
+		}
+	}
+	
+//	std::cout << "buffer: " << buffer << std::endl;
+//	std::cout << "nbytes: " << nbytes << std::endl;
 	
 	if (nbytes > 0) {
 		// 데이터를 정상적으로 읽었을 때 처리
