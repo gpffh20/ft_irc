@@ -1,33 +1,34 @@
 #include "../../inc/command.hpp"
 
 std::vector<std::string> Command::parseForPART(std::vector<std::string> args) {
-	args[2] = args[2].substr(1);
-	std::string msg = args[2];
-	for (size_t i = 3; i < args.size(); ++i) {
-		msg += " " + args[i];
-	}
-	if (args[2].find(',')) {
-		std::vector<std::string> temp;
-		temp.push_back(args[0]);
-		temp.push_back(args[1]);
-		std::string channel_list = args[2];
-		std::string delimiter = ",";
-		size_t pos = 0;
-		std::string token;
-		while ((
-				pos = channel_list.find(delimiter)
-		) != std::string::npos) {
-			token = channel_list.substr(0, pos);
-			temp.push_back(token);
-			channel_list.erase(0, pos + delimiter.
-					length()
-			);
+	// Rejoin tokens if ':' is found
+	if (args.size() > 2) {
+		for (size_t i = 1; i < args.size(); ++i) {
+			if (!args[i].empty() && args[i][0] == ':') {
+				std::string combined = args[i].substr(1);
+				for (size_t j = i + 1; j < args.size(); ++j) {
+					combined += " " + args[j];
+				}
+				args.resize(i);
+				args.push_back(combined);
+				break;
+			}
 		}
-		temp.push_back(channel_list);
-		args = temp;
-		args.push_back(msg);
 	}
-	return args;
+	std::vector<std::string> new_args;
+	new_args.push_back(args[0]);
+	std::string msg = args[2].size() ? args[2] : "leaving";
+	std::string::size_type start = 0;
+	std::string::size_type end = args[1].find(',');
+	
+	while (end != std::string::npos) {
+		new_args.push_back(args[1].substr(start, end - start));
+		start = end + 1;
+		end = args[1].find(',', start);
+	}
+	new_args.push_back(args[1].substr(start));
+	new_args.push_back(msg);
+	return new_args;
 }
 
 void Command::part(Client &client, std::vector<std::string> args) {
@@ -36,13 +37,12 @@ void Command::part(Client &client, std::vector<std::string> args) {
 		client.addToSendBuffer(NEEDMOREPARAMS("PART"));
 		return;
 	}
-	
-	for (size_t i = 2; i < args.size() - 1; ++i) {
-		std::string channel_name = "#" + args[i];
+	for (size_t i = 1; i < args.size() - 1; ++i) {
+		std::string channel_name = args[i];
 		std::map<std::string, Channel>::iterator it = server_.getChannels().find(channel_name);
 		if (it == server_.getChannels().end()) {
-			client.addToSendBuffer(
-					ERR_NOSUCHCHANNEL + client.getNickname() + " " + channel_name + " :No such channel\r\n");
+			client.addToSendBuffer(std::string(ERR_NOSUCHCHANNEL) + " " + client.getNickname() + " " + channel_name
+										   + " :No such channel\r\n");
 			return;
 		}
 		
@@ -65,7 +65,7 @@ void Command::part(Client &client, std::vector<std::string> args) {
 		// 브로드캐스트 메시지 전송 (자신 제외)
 		std::string partMessage =
 				":" + client.getNickname() + "!" + client.getUsername() + "@" + client.getHostname() + " PART "
-						+ channel_name + " :" + args[args.size() - 1];
+						+ channel_name + " :" + args[args.size() - 1] + "\r\n";
 		for (it_client = clients.begin(); it_client != clients.end(); ++it_client) {
 			if ((*it_client)->getNickname() != client.getNickname()) {
 				(*it_client)->addToSendBuffer(partMessage);
