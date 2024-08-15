@@ -5,6 +5,7 @@
 #include <unistd.h>
 #include <vector>
 #include <sys/socket.h>
+#include <algorithm>
 
 
 #include "Message.hpp"
