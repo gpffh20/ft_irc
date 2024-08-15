@@ -34,6 +34,7 @@ Server::~Server() {
 
 void Server::run() {
 	while (true) {
+		std::cout << "fd_count: " << fd_count << std::endl;
 		// event_count
 		int poll_count = poll(fds, fd_count, -1); // 무한 대기 상태로 폴링
 		if (poll_count == -1) {
@@ -256,6 +257,7 @@ void Server::handleCommands(Client &client) {
 		}
 		command_->run(client, args);
 		if (client.getError()) {
+			removeClient(client.getFd());
 			break;
 		}
 	}
