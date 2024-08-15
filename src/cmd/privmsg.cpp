@@ -44,15 +44,13 @@ void Command::privmsg(Client& client, std::vector<std::string> args) {
                                  channel->getChannelName() +
                                  " :You're not on that channel");
         } else {
-			std::vector<int>::iterator itClient;
-//          std::vector<Client*>::iterator itClient;
-          for (itClient = channel->getClientListId().begin();
-               itClient != channel->getClientListId().end(); ++itClient) {
-            if (*itClient != client.getFd()) {
-				Client* client = getClientByFd(*itClient);
-              client->addToSendBuffer(
-                  ":" + client->getNickname() + "!" + client->getUsername() +
-                  "@" + client->getServername() + " PRIVMSG " + receiver + " :" +
+          std::vector<Client*>::iterator itClient;
+          for (itClient = channel->getClientList().begin();
+               itClient != channel->getClientList().end(); ++itClient) {
+            if (*itClient != &client) {
+              (*itClient)->addToSendBuffer(
+                  ":" + client.getNickname() + "!" + client.getUsername() +
+                  "@" + client.getServername() + " PRIVMSG " + receiver + " :" +
                   message);
             }
           }
