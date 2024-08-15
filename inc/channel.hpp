@@ -43,6 +43,7 @@ public:
     bool        getTopicProtected();
     void        setTopicProtected(bool topicProtected);
 	std::vector<Client *> &getClientList();
+	std::vector<int> getClientListId();
 
     void        addClient(Client &client);
 	void        removeClient(Client &client);

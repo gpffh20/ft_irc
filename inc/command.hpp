@@ -42,6 +42,7 @@ class Command {
 
 	std::string NEEDMOREPARAMS(std::string command);
 	Channel *getChannelByName(std::string channelName);
+	Client *getClientByFd(int fd);
   
   private:
 	Command &operator=(const Command&);

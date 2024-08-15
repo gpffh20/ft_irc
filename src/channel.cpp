@@ -200,3 +200,11 @@ void Channel::sendToChannel(std::string &message) {
 		(*it)->addToSendBuffer(message);
 	}
 }
+
+std::vector<int> Channel::getClientListId() {
+	std::vector<int> clientListId;
+	for (std::vector<Client *>::iterator it = clientList_.begin(); it != clientList_.end(); ++it) {
+		clientListId.push_back((*it)->getFd());
+	}
+	return clientListId;
+}
