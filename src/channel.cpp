@@ -4,7 +4,8 @@ Channel::Channel() : maxClient_(0), topicProtected_(false), inviteOnly_(false) {
 	std::cout << "Anonymous channel created" << std::endl;
 }
 
-Channel::Channel(std::string channelName)  : channelName_(channelName), maxClient_(0), topicProtected_(false), inviteOnly_(false) {
+Channel::Channel(std::string channelName)
+		: channelName_(channelName), maxClient_(0), topicProtected_(false), inviteOnly_(false) {
 	std::cout << "Registered channel created, named " << channelName_ << std::endl;
 }
 
@@ -71,7 +72,12 @@ void Channel::addClient(Client &client) {
 }
 
 void Channel::removeClient(Client &client) {
-	clientList_.erase(std::remove(clientList_.begin(), clientList_.end(), &client), clientList_.end());
+	std::vector<Client *>::iterator it = std::find(clientList_.begin(), clientList_.end(), &client);
+	if (it != clientList_.end()) {
+		*it = NULL;  // 해당 클라이언트 참조를 null로 설정
+		clientList_.erase(it);  // 리스트에서 제거
+	}
+//	clientList_.erase(std::remove(clientList_.begin(), clientList_.end(), &client), clientList_.end());
 	if (isClientOp(client)) {
 		removeOp(client);
 	}
@@ -140,7 +146,7 @@ void Channel::removeUser(std::string nickname) {
 	}
 }
 
-Client*	Channel::getClientByNickname(std::string nickname) {
+Client *Channel::getClientByNickname(std::string nickname) {
 	std::vector<Client *>::iterator iter = clientList_.begin();
 	for (; iter != clientList_.end(); iter++) {
 		if ((*iter)->getNickname() == nickname) {
@@ -150,11 +156,11 @@ Client*	Channel::getClientByNickname(std::string nickname) {
 	return NULL;
 }
 
-std::string Channel::getModeString(Client& client) {
+std::string Channel::getModeString(Client &client) {
 	std::ostringstream modeString;
 	bool isOp = isClientOp(client);
 	bool spaceFlag = false;
-
+	
 	if (!channelKey_.empty()) {
 		modeString << (spaceFlag ? " " : "") << "+k";
 		if (isOp) {
@@ -162,36 +168,35 @@ std::string Channel::getModeString(Client& client) {
 		}
 		spaceFlag = true;
 	}
-
+	
 	if (topicProtected_) {
 		modeString << (spaceFlag ? " " : "") << "+t";
 		spaceFlag = true;
 	}
-
+	
 	if (inviteOnly_) {
 		modeString << (spaceFlag ? " " : "") << "+i";
 		spaceFlag = true;
 	}
-
+	
 	if (maxClient_ > 0) {
 		modeString << (spaceFlag ? " " : "") << "+l " << maxClient_;
 		spaceFlag = true;
 	}
-
+	
 	if (isOp) {
 		modeString << (spaceFlag ? " " : "") << "+o";
-		std::vector<Client*>::const_iterator it;
+		std::vector<Client *>::const_iterator it;
 		for (it = opUser_.begin(); it != opUser_.end(); ++it) {
 			modeString << " " << (*it)->getNickname();
 		}
 	}
-
+	
 	return modeString.str();
 }
 
-
-void Channel::sendToChannel(std::string& message) {
-	for (std::vector<Client*>::iterator it = clientList_.begin(); it != clientList_.end(); ++it) {
+void Channel::sendToChannel(std::string &message) {
+	for (std::vector<Client *>::iterator it = clientList_.begin(); it != clientList_.end(); ++it) {
 		(*it)->addToSendBuffer(message);
 	}
 }
