@@ -149,23 +149,10 @@ void Client::setInvisible(bool invisible) {
 	invisible_ = invisible;
 }
 
-// new addToSendBuffer
-//void Client::addToSendBuffer(const std::string &message) {
-//	std::cout << ">> " << message << std::endl;
-//	sendbuf_ += message;
-//	sendMessage();  // 메시지 즉시 전송
-//}
+std::string Client::getForRead() {
+	return for_read;
+}
 
-// new sendMessage
-//void Client::sendMessage() {
-//	if (!sendbuf_.empty()) {
-//		const char *msg = sendbuf_.c_str();
-//		ssize_t sent = send(fd, msg, sendbuf_.size(), 0);
-//		if (sent > 0) {
-//			sendbuf_.erase(0, sent);
-//		}
-//		if (sent < 0) {
-//			// 오류 처리
-//		}
-//	}
-//}
+void Client::setForRead(const std::string &tmp) {
+	for_read = tmp;
+}

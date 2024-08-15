@@ -178,18 +178,19 @@ void Server::handleClientMessages(int client_fd) {
 	
 	char buffer[1024];
 	int nbytes;
-	static std::string tmp;
+	std::string tmp = client.getForRead();
 	std::string command;
 	
 	while ((nbytes = read(client_fd, buffer, sizeof(buffer))) > 0) {
 		tmp.append(buffer, nbytes);
+		client.setForRead(tmp);
 		if (tmp.find("\r\n") != std::string::npos) {
 			break;
 		}
 	}
 	
-	std::cout << "tmp: " << tmp << std::endl;
-	command = tmp;
+	command = client.getForRead();
+	std::cout << "command: " << command << std::endl;
 	
 	if (nbytes > 0) {
 		// 데이터를 정상적으로 읽었을 때 처리
@@ -217,7 +218,7 @@ void Server::handleClientMessages(int client_fd) {
 		std::cerr << "Error reading from client, fd: " << client_fd << std::endl;
 		removeClient(client_fd);
 	}
-	tmp.clear();
+	client.setForRead("");
 }
 
 std::vector<std::string> Server::splitBySpace(const std::string &str) {

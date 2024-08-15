@@ -33,6 +33,7 @@ class Client {
 	const std::string &getHostname() const;
 	const std::string &getServername() const;
 	std::vector<Channel*> getChannels();
+	std::string getForRead();
 	
 	// setter
 	void setNickname(const std::string &nickname);
@@ -48,6 +49,7 @@ class Client {
 	void setEnd(bool end);
 	void setError(bool error);
 	void setInvisible(bool invisible);
+	void setForRead(const std::string &tmp);
 	
 	// send
 	void addToSendBuffer(const std::string &message);
@@ -72,6 +74,7 @@ class Client {
 	std::string servername_;
 	std::string realname_;
 	std::string sendbuf_;
+	std::string for_read;
 
 	bool end_;
 	bool register_;
