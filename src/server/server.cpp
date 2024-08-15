@@ -28,9 +28,8 @@ Server::~Server() {
 		 it != clients.end(); ++it) {
 		close(it->first);
 	}
-	if (server_fd != -1)
-		close(server_fd);
 	close(server_fd);
+	delete(command_);
 }
 
 void Server::run() {
