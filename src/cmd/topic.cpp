@@ -39,7 +39,7 @@ void Command::topic(Client &client, std::vector<std::string> args) {
 		if (channel->getTopic().empty()) {
 			client.addToSendBuffer("331 " + client.getNickname() + " " + channelName + " :No topic is set\r\n");
 		} else {
-			client.addToSendBuffer("332 " + client.getNickname() + " " + channelName + " :" + channel->getTopic());
+			client.addToSendBuffer("332 " + client.getNickname() + " " + channelName + " :" + channel->getTopic() + "\r\n");
 		}
 		return ;
 	}
@@ -53,7 +53,7 @@ void Command::topic(Client &client, std::vector<std::string> args) {
 	std::vector<Client *> clientList = channel->getClientList();
 	std::string msg =
 			":" + client.getNickname() + "!" + client.getHostname() + "@" + client.getServername() + " TOPIC "
-					+ channelName + " :" + args[2];
+					+ channelName + " :" + args[2] + "\r\n";
 	for (std::vector<Client *>::iterator it = clientList.begin(); it != clientList.end(); ++it) {
 			(*it)->addToSendBuffer(msg);
 	}

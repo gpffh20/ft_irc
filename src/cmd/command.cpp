@@ -24,7 +24,7 @@ void Command::run(Client &client, std::vector<std::string> args) {
 			std::string msg;
 			msg = ":localhost 001 " + client.getNickname() + " :Welcome to the FT_IRC Network, "
 					+ client.getNickname() + "!" + client.getHostname()
-					+ "@" + client.getServername();
+					+ "@" + client.getServername() + "\r\n";
 			client.addToSendBuffer(msg);
 			msg = ":localhost 422 " + client.getNickname() + " :MOTD File is missing\r\n";
 			client.addToSendBuffer(msg);
@@ -61,7 +61,7 @@ void Command::run(Client &client, std::vector<std::string> args) {
 }
 
 std::string Command::NEEDMOREPARAMS(std::string command) {
-	return ERR_NEEDMOREPARAMS + command + " :Not enough parameters";
+	return ERR_NEEDMOREPARAMS + command + " :Not enough parameters\r\n";
 }
 
 bool Command::isNicknameExist(std::string nickname, int fd) {

@@ -9,7 +9,7 @@ void Command::invite(Client& client, std::vector<std::string> args) {
 	std::string channel_name = args[2];
 	std::map<std::string, Channel>::iterator it = server_.getChannels().find(channel_name);
 	if (it == server_.getChannels().end()) {
-		client.addToSendBuffer(ERR_NOSUCHCHANNEL + client.getNickname() + " " + channel_name + " :No such channel");
+		client.addToSendBuffer(ERR_NOSUCHCHANNEL + client.getNickname() + " " + channel_name + " :No such channel\r\n");
 		return;
 	}
 	// channel안에 해당 client가 없으면 error
@@ -23,7 +23,7 @@ void Command::invite(Client& client, std::vector<std::string> args) {
 	}
 	if (!client_found) {
 		client.addToSendBuffer(
-				ERR_NOTONCHANNEL + client.getNickname() + " " + channel_name + " :You're not on that channel");
+				ERR_NOTONCHANNEL + client.getNickname() + " " + channel_name + " :You're not on that channel\r\n");
 		return;
 	}
 
@@ -38,7 +38,7 @@ void Command::invite(Client& client, std::vector<std::string> args) {
 	}
 
 	if (target_client == NULL) {
-		client.addToSendBuffer(std::string(ERR_NOSUCHNICK) + " " + client.getNickname() + " " + nickname + " :No such nick/channel");
+		client.addToSendBuffer(std::string(ERR_NOSUCHNICK) + " " + client.getNickname() + " " + nickname + " :No such nick/channel\r\n");
 		return;
 	}
 
@@ -48,6 +48,6 @@ void Command::invite(Client& client, std::vector<std::string> args) {
 	}
 
 	// 초대 메시지 전송
-	target_client->addToSendBuffer(":" + client.getNickname() + "!" + client.getUsername() + "@" + client.getHostname() + " INVITE " + nickname + " " + channel_name);
-	client.addToSendBuffer(":" + client.getNickname() + " INVITE " + nickname + " " + channel_name);
+	target_client->addToSendBuffer(":" + client.getNickname() + "!" + client.getUsername() + "@" + client.getHostname() + " INVITE " + nickname + " " + channel_name + "\r\n");
+	client.addToSendBuffer(":" + client.getNickname() + " INVITE " + nickname + " " + channel_name + "\r\n");
 }

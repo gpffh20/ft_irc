@@ -72,13 +72,13 @@ void Command::kick(Client &client, std::vector<std::string> args) {
 	// kick 실행
 	client.addToSendBuffer(
 			":" + client.getNickname() + "!" + client.getHostname() + "@" + client.getServername() + " KICK "
-					+ channelName + " " + targetNickname + " :" + reason);
+					+ channelName + " " + targetNickname + " :" + reason + "\r\n");
 
 	
 	// kick 메시지
 	std::vector < Client * > clientList = channel->getClientList();
 	std::string
-			msg = ":" + client.getNickname() + " KICK " + channelName + " " + targetNickname + " :" + reason;
+			msg = ":" + client.getNickname() + " KICK " + channelName + " " + targetNickname + " :" + reason + "\r\n";
 	for (std::vector<Client *>::iterator it = clientList.begin(); it != clientList.end(); ++it) {
 		if ((*it)->getNickname() != client.getNickname()) {
 			(*it)->addToSendBuffer(msg);

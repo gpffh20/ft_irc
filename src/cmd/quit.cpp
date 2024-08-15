@@ -20,7 +20,7 @@ void Command::quit(Client &client, std::vector<std::string> args) {
 	args = parseForQUIT(args);
 	std::string msg = args[1].size() ? args[1] : "leaving";
 	std::string quitMessage = ":" + client.getNickname() + "!" + client.getHostname() + "@" + client.getServername()
-				+ " QUIT :Quit: " + msg;
+				+ " QUIT :Quit: " + msg + "\r\n";
 	
 	// 클라이언트가 참여한 채널에 있는 클라이언트에게 메세지 전달
 	std::vector<Channel *> channels = client.getChannels();
