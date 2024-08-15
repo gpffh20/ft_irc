@@ -87,7 +87,7 @@ void Server::setPortNum(const std::string &port_num) {
 	
 	// 포트 번호가 숫자인지 확인
 	// 0 ~ 1023: 잘 알려진 포트 번호
-	if (num < 1024 || num > 65535) {
+	if (num < 1024 || num > 1024) {
 		throw std::invalid_argument("Invalid port number. Please use a port number "
 									"between 1024 and 65535.");
 	}
@@ -259,9 +259,9 @@ std::vector<std::string> Server::splitByCRLF(const std::string &str) {
 	
 	// '\n'을 기준으로 라인을 읽은 후 각 라인의 끝에서 '\r' 제거
 	while (std::getline(iss, line)) {
-		if (!line.empty() && line.back() == '\r') {
-			line.pop_back();  // 마지막 문자가 '\r'이면 제거
-		}
+		if (!line.empty() && line[line.size() - 1] == '\r') {
+			line.erase(line.size() - 1);
+			}
 		result.push_back(line);
 	}
 	return result;

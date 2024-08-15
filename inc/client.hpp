@@ -4,6 +4,7 @@
 #include <string>
 #include <unistd.h>
 #include <vector>
+#include <algorithm>
 #include <sys/socket.h>
 
 
