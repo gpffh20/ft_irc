@@ -43,6 +43,7 @@ public:
   void          removeNickname(const std::string &nickname);
   void	     	removeChannel(const std::string &channel_name);
   void			addChannel(const Channel &channel);
+  void      removeDisconnectedClientsFromChannels(int client_fd);
   
 
 private:

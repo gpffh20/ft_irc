@@ -149,9 +149,9 @@ void Server::addNickname(const std::string &nickname) {
 void Server::removeClient(int client_fd) {
 	std::map<int, Client>::iterator it = clients.find(client_fd);
 	if (it != clients.end()) {
-		it->second.sendMessage();  // 남아있는 메세지 전송
-		close(client_fd);
-		clients.erase(it);
+		it->second.sendMessage();  // Send remaining messages
+		clients.erase(it);  // Erase client from map before closing the file descriptor
+		close(client_fd);  // Close the file descriptor
 	}
 	for (int i = 0; i < fd_count; i++) {
 		if (fds[i].fd == client_fd) {
@@ -171,6 +171,17 @@ void Server::handleNewConnection() {
 	}
 	fcntl(new_fd, F_SETFL, O_NONBLOCK);
 	addClient(new_fd);
+}
+
+void Server::removeDisconnectedClientsFromChannels(int client_fd) {
+	Client &client = clients.find(client_fd)->second;
+	std::vector<Channel *> channels = client.getChannels();
+	for (std::vector<Channel *>::iterator it = channels.begin(); it != channels.end(); ++it) {
+		(*it)->removeClient(client);
+		if ((*it)->getClientList().empty()) {
+			removeChannel((*it)->getChannelName());
+		}
+	}
 }
 
 void Server::handleClientMessages(int client_fd) {
@@ -205,7 +216,8 @@ void Server::handleClientMessages(int client_fd) {
 		}
 	} else if (nbytes == 0) {
 		// 클라이언트가 연결을 종료함
-		std::cout << "Client disconnected, fd: " << client_fd << std::endl;
+		std::cout << "Client disconnected, fd: " << client_fd << std::endl; // 클라이언트 연결 종료, 서버랑 채널 모두 연결 끊어야함
+		removeDisconnectedClientsFromChannels(client_fd);
 		removeClient(client_fd);
 	} else if (nbytes == -1) {
 		// 데이터를 아직 읽을 수 없는 상태이므로, 다음 루프로 넘어감

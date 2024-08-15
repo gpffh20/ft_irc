@@ -47,7 +47,7 @@ void Command::privmsg(Client& client, std::vector<std::string> args) {
           std::vector<Client*>::iterator itClient;
           for (itClient = channel->getClientList().begin();
                itClient != channel->getClientList().end(); ++itClient) {
-            if (*itClient != &client) {
+            if (*itClient != &client && (*itClient)->getError() == false) {
               (*itClient)->addToSendBuffer(
                   ":" + client.getNickname() + "!" + client.getUsername() +
                   "@" + client.getServername() + " PRIVMSG " + receiver + " :" +
