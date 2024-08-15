@@ -17,7 +17,10 @@ std::vector<std::string> Command::parseForPART(std::vector<std::string> args) {
 	}
 	std::vector<std::string> new_args;
 	new_args.push_back(args[0]);
-	std::string msg = args[2].size() ? args[2] : "leaving";
+	if (args.size() < 3) {
+		args.push_back("leaving");
+	}
+	std::string msg = args[2];
 	std::string::size_type start = 0;
 	std::string::size_type end = args[1].find(',');
 	
