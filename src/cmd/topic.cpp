@@ -49,7 +49,6 @@ void Command::topic(Client &client, std::vector<std::string> args) {
 		return;
 	}
 	channel->setTopic(args[2]);
-	std::cout << "TOPIC: " << channel->getTopic() << std::endl;
 	std::vector<Client *> clientList = channel->getClientList();
 	std::string msg =
 			":" + client.getNickname() + "!" + client.getHostname() + "@" + client.getServername() + " TOPIC "

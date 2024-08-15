@@ -8,9 +8,7 @@ Channel::Channel(std::string channelName)  : channelName_(channelName), maxClien
 	std::cout << "Registered channel created, named " << channelName_ << std::endl;
 }
 
-Channel::~Channel() {
-	std::cout << "Channel destroyed" << std::endl;
-}
+Channel::~Channel() {}
 
 std::string Channel::getChannelKey() {
 	return channelKey_;
@@ -142,16 +140,6 @@ void Channel::removeUser(std::string nickname) {
 	}
 }
 
-//bool Channel::isOp(std::string nickname) {
-//	std::vector<Client *>::iterator iter = opUser_.begin();
-//	for (; iter != opUser_.end(); iter++) {
-//		if ((*iter)->getNickname() == nickname) {
-//			return true;
-//		}
-//	}
-//	return false;
-//}
-
 Client*	Channel::getClientByNickname(std::string nickname) {
 	std::vector<Client *>::iterator iter = clientList_.begin();
 	for (; iter != clientList_.end(); iter++) {
@@ -207,12 +195,3 @@ void Channel::sendToChannel(std::string& message) {
 		(*it)->addToSendBuffer(message);
 	}
 }
-
-
-//void Channel::sendToChannel(std::string message) {
-//	(void) message;
-//	std::vector<Client *>::iterator iter = clientList_.begin();
-//	for (; iter != clientList_.end(); iter++) {
-//		(*iter)->appendClientRecvBuf(message);
-//	}
-//}

@@ -189,17 +189,14 @@ void Server::handleClientMessages(int client_fd) {
 	}
 	
 	command = client.getForRead();
-	std::cout << "command: " << command << std::endl;
 	
 	if (nbytes > 0) {
 		// 데이터를 정상적으로 읽었을 때 처리
-//		if (std::string(buffer, nbytes).find("CAP LS") != std::string::npos) {
 		if (command.find("CAP LS") != std::string::npos) {
 			removeClient(client_fd);
 			return;
 		}
 		try {
-//			client.setMessage(std::string(buffer, nbytes));
 			client.setMessage(command);
 			handleCommands(client);
 		} catch (const std::exception &e) {

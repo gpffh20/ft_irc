@@ -63,6 +63,9 @@ void Command::privmsg(Client& client, std::vector<std::string> args) {
       std::map<int, Client>::iterator itClient;
       for (itClient = clients.begin(); itClient != clients.end(); ++itClient) {
         if (itClient->second.getNickname() == receiver) {
+			if (clients.find(itClient->first) == clients.end()) {
+				continue;
+			}
           toClient = &itClient->second;
           break;
         }
