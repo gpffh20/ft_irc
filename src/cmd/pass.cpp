@@ -2,7 +2,7 @@
 
 void Command::pass(Client &client, std::vector<std::string> args) {
 	if (client.getPass()) {
-		client.addToSendBuffer(std::string(ERR_ALREADYREGISTRED) + " :You are already registered\r\n");
+		client.addToSendBuffer(std::string(ERR_ALREADYREGISTRED) + " :You are already registered");
 		return;
 	}
 	if (args.size() < 2) {
@@ -10,7 +10,7 @@ void Command::pass(Client &client, std::vector<std::string> args) {
 		return;
 	}
 	if (args[1] != server_.getPassWord()) {
-		client.addToSendBuffer(std::string(ERR_PASSWDMISMATCH) + " :Password incorrect\r\n");
+		client.addToSendBuffer(std::string(ERR_PASSWDMISMATCH) + " :Password incorrect");
 		client.setError(true);
 		return;
 	}

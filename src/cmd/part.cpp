@@ -45,7 +45,7 @@ void Command::part(Client &client, std::vector<std::string> args) {
 		std::map<std::string, Channel>::iterator it = server_.getChannels().find(channel_name);
 		if (it == server_.getChannels().end()) {
 			client.addToSendBuffer(std::string(ERR_NOSUCHCHANNEL) + " " + client.getNickname() + " " + channel_name
-										   + " :No such channel\r\n");
+										   + " :No such channel");
 			return;
 		}
 		
@@ -61,14 +61,14 @@ void Command::part(Client &client, std::vector<std::string> args) {
 		}
 		if (!client_found) {
 			client.addToSendBuffer(
-					ERR_NOTONCHANNEL + client.getNickname() + " " + channel_name + " :You're not on that channel\r\n");
+					ERR_NOTONCHANNEL + client.getNickname() + " " + channel_name + " :You're not on that channel");
 			return;
 		}
 		
 		// 브로드캐스트 메시지 전송 (자신 제외)
 		std::string partMessage =
 				":" + client.getNickname() + "!" + client.getUsername() + "@" + client.getHostname() + " PART "
-						+ channel_name + " :" + args[args.size() - 1] + "\r\n";
+						+ channel_name + " :" + args[args.size() - 1];
 		for (it_client = clients.begin(); it_client != clients.end(); ++it_client) {
 			if ((*it_client)->getNickname() != client.getNickname()) {
 				(*it_client)->addToSendBuffer(partMessage);

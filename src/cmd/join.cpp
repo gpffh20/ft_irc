@@ -28,19 +28,19 @@ void Command::join(Client &client, std::vector<std::string> args) {
 		channel = &server_.getChannels()[channelName];
 		// 초대 전용 모드 확인 및 초대받지 않은 클라이언트 거부
 		if (channel->getInviteOnly() && !channel->isClientInvited(client)) {
-			client.addToSendBuffer(std::string(ERR_INVITEONLYCHAN) + " " + client.getNickname() + " " + channelName + " :Cannot join channel (invite only)\r\n");
+			client.addToSendBuffer(std::string(ERR_INVITEONLYCHAN) + " " + client.getNickname() + " " + channelName + " :Cannot join channel (invite only)");
 			return;
 		}
 
 		// 비밀번호 모드 확인 및 비밀번호가 맞는지 확인
 		if (!channel->getChannelKey().empty() && channel->getChannelKey() != keyProvided) {
-			client.addToSendBuffer(std::string(ERR_BADCHANNELKEY) + " " + client.getNickname() + " " + channelName + " :Cannot join channel (Incorrect channel key)\r\n");
+			client.addToSendBuffer(std::string(ERR_BADCHANNELKEY) + " " + client.getNickname() + " " + channelName + " :Cannot join channel (Incorrect channel key)");
 			return;
 		}
 
 		// 클라이언트 수 제한 확인
 		if (channel->getMaxClient() > 0 && channel->getClientList().size() >= (unsigned long)(channel->getMaxClient())) {
-			client.addToSendBuffer(std::string(ERR_CHANNELISFULL) + " " + client.getNickname() + " " + channelName + " :Cannot join channel (channel is full)\r\n");
+			client.addToSendBuffer(std::string(ERR_CHANNELISFULL) + " " + client.getNickname() + " " + channelName + " :Cannot join channel (channel is full)");
 			return;
 		}
 	}
@@ -69,7 +69,7 @@ void Command::join(Client &client, std::vector<std::string> args) {
 	}
 	client.addToSendBuffer("353 " + client.getNickname() + " = " + channelName + " :" + userList);
 	client.addToSendBuffer(
-			"366 " + client.getNickname() + " " + channelName + " :End of /NAMES list.\r\n");
+			"366 " + client.getNickname() + " " + channelName + " :End of /NAMES list.");
 	
 	// 채널의 다른 클라이언트에게 JOIN 메시지 방송
 	std::string joinMessage =

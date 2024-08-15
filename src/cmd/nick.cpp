@@ -3,13 +3,13 @@
 void Command::nick(Client &client, std::vector<std::string> args) {
 	// PASS 등록 안됨
 	if (!client.getNick() && !client.getPass()) {
-		client.addToSendBuffer(std::string(ERR_NOTREGISTERED) + " :You have not registered\r\n");
+		client.addToSendBuffer(std::string(ERR_NOTREGISTERED) + " :You have not registered");
 		client.setError(true);
 		return;
 	}
 	// 인자 수 오류
 	if (args.size() < 2) {
-		client.addToSendBuffer(std::string(ERR_NONICKNAMEGIVEN) + " :No nickname given\r\n");
+		client.addToSendBuffer(std::string(ERR_NONICKNAMEGIVEN) + " :No nickname given");
 		return;
 	}
 	std::string newNickname = args[1];
@@ -18,7 +18,7 @@ void Command::nick(Client &client, std::vector<std::string> args) {
 	while (isNicknameExist(newNickname, client.getFd())) {
 		if (client.getNick()) {
 			client.addToSendBuffer(
-				std::string(ERR_NICKNAMEINUSE) + " " + newNickname + " :Nickname is already in use\r\n");
+				std::string(ERR_NICKNAMEINUSE) + " " + newNickname + " :Nickname is already in use");
 			return;
 		} else {
 			newNickname += "_";

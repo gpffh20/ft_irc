@@ -5,7 +5,7 @@ void Command::privmsg(Client& client, std::vector<std::string> args) {
   if (args.size() < 3) {
     client.addToSendBuffer(":ircserv " + std::string(ERR_NEEDMOREPARAMS) + " " +
                            client.getNickname() +
-                           " PRIVMSG :Not enough parameters\r\n");
+                           " PRIVMSG :Not enough parameters");
     return;
   }
 
@@ -17,7 +17,7 @@ void Command::privmsg(Client& client, std::vector<std::string> args) {
     message = args[2].substr(1);  // ':' 제거
   } else {
     client.addToSendBuffer(":ircserv " + std::string(ERR_NOTEXTTOSEND) + " " +
-                           client.getNickname() + " :No text to send\r\n");
+                           client.getNickname() + " :No text to send");
     return;
   }
 
@@ -35,14 +35,14 @@ void Command::privmsg(Client& client, std::vector<std::string> args) {
       if (it == channels.end()) {
         client.addToSendBuffer(":ircserv " + std::string(ERR_NOSUCHCHANNEL) +
                                " " + client.getNickname() + " " + receiver +
-                               " :No such channel\r\n");
+                               " :No such channel");
       } else {
         Channel* channel = &it->second;
         if (!channel->isClientInChannel(client)) {
           client.addToSendBuffer(":ircserv " + std::string(ERR_NOTONCHANNEL) +
                                  " " + client.getNickname() + " " +
                                  channel->getChannelName() +
-                                 " :You're not on that channel\r\n");
+                                 " :You're not on that channel");
         } else {
           std::vector<Client*>::iterator itClient;
           for (itClient = channel->getClientList().begin();
@@ -74,7 +74,7 @@ void Command::privmsg(Client& client, std::vector<std::string> args) {
       if (!toClient) {
         client.addToSendBuffer(":ircserv " + std::string(ERR_NOSUCHNICK) + " " +
                                client.getNickname() + " " + receiver +
-                               " :No such nick/channel\r\n");
+                               " :No such nick/channel");
       } else {
         toClient->addToSendBuffer(":" + client.getNickname() + "!" +
                                   client.getUsername() + "@" +

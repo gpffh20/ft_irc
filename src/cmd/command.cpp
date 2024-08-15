@@ -14,7 +14,7 @@ void Command::run(Client &client, std::vector<std::string> args) {
 		else if (command == "USER")
 			user(client, args);
 		else {
-			client.addToSendBuffer(std::string(ERR_NOTREGISTERED) + " " + client.getNickname() + " " + command + " :You have not registered\r\n");
+			client.addToSendBuffer(std::string(ERR_NOTREGISTERED) + " " + client.getNickname() + " " + command + " :You have not registered");
 			client.setError(true);
 		}
 		if (client.getError())
@@ -26,7 +26,7 @@ void Command::run(Client &client, std::vector<std::string> args) {
 					+ client.getNickname() + "!" + client.getHostname()
 					+ "@" + client.getServername();
 			client.addToSendBuffer(msg);
-			msg = ":localhost 422 " + client.getNickname() + " :MOTD File is missing\r\n";
+			msg = ":localhost 422 " + client.getNickname() + " :MOTD File is missing";
 			client.addToSendBuffer(msg);
 		}
 	} else {

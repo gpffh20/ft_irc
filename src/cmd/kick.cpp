@@ -32,7 +32,7 @@ void Command::kick(Client &client, std::vector<std::string> args) {
 	std::vector<std::string> &nicknames = server_.getNicknames();
 	if (std::find(nicknames.begin(), nicknames.end(), targetNickname) == nicknames.end()) {
 		client.addToSendBuffer(
-				std::string(ERR_NOSUCHNICK) + " " + client.getNickname() + " " + targetNickname + " :No such nick\r\n");
+				std::string(ERR_NOSUCHNICK) + " " + client.getNickname() + " " + targetNickname + " :No such nick");
 		return;
 	}
 	
@@ -41,7 +41,7 @@ void Command::kick(Client &client, std::vector<std::string> args) {
 	if (!channel) {
 		client.addToSendBuffer(
 				std::string(ERR_NOSUCHCHANNEL) + " " + client.getNickname() + " " + channelName
-						+ " :No such channel\r\n");
+						+ " :No such channel");
 		return;
 	}
 	
@@ -49,7 +49,7 @@ void Command::kick(Client &client, std::vector<std::string> args) {
 	if (!channel->isClientInChannel(client)) {
 		client.addToSendBuffer(
 				std::string(ERR_NOTONCHANNEL) + " " + client.getNickname() + " " + channelName
-						+ " :You're not on that channel\r\n");
+						+ " :You're not on that channel");
 		return;
 	}
 	
@@ -58,14 +58,14 @@ void Command::kick(Client &client, std::vector<std::string> args) {
 	if (!channel->isClientInChannel(*target) || targetNickname == client.getNickname()) {
 		client.addToSendBuffer(
 				std::string(ERR_USERNOTINCHANNEL) + " " + client.getNickname() + " " + targetNickname + " "
-						+ channelName + " :They aren't on that channel\r\n");
+						+ channelName + " :They aren't on that channel");
 		return;
 	}
 	
 	// client가 채널의 operator가 아님
 	if (!channel->isClientOp(client)) {
 		client.addToSendBuffer(std::string(ERR_CHANOPRIVSNEEDED) + " " + client.getNickname() + " " + channelName
-									   + " :You're not channel operator\r\n");
+									   + " :You're not channel operator");
 		return;
 	}
 	

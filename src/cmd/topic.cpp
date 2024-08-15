@@ -27,17 +27,17 @@ void Command::topic(Client &client, std::vector<std::string> args) {
 //	채널 없음
 	Channel *channel = getChannelByName(channelName);
 	if (!channel) {
-		client.addToSendBuffer(std::string(ERR_NOSUCHCHANNEL) + " " + client.getNickname() + " " + channelName + " :No such channel\r\n");
+		client.addToSendBuffer(std::string(ERR_NOSUCHCHANNEL) + " " + client.getNickname() + " " + channelName + " :No such channel");
 		return;
 	}
 	if (!channel->isClientInChannel(client)) {
-		client.addToSendBuffer(std::string(ERR_NOTONCHANNEL) + " " + client.getNickname() + " " + channelName + " :You're not on that channel\r\n");
+		client.addToSendBuffer(std::string(ERR_NOTONCHANNEL) + " " + client.getNickname() + " " + channelName + " :You're not on that channel");
 		return;
 	}
 //	/topic
 	if (args.size() == 2) {
 		if (channel->getTopic().empty()) {
-			client.addToSendBuffer("331 " + client.getNickname() + " " + channelName + " :No topic is set\r\n");
+			client.addToSendBuffer("331 " + client.getNickname() + " " + channelName + " :No topic is set");
 		} else {
 			client.addToSendBuffer("332 " + client.getNickname() + " " + channelName + " :" + channel->getTopic());
 		}
@@ -45,7 +45,7 @@ void Command::topic(Client &client, std::vector<std::string> args) {
 	}
 	// topic mode 인데 오퍼레이터 권한이 없을 때
 	if (channel->getTopicProtected() && !channel->isClientOp(client)) {
-		client.addToSendBuffer(std::string(ERR_CHANOPRIVSNEEDED) + " " + client.getNickname() + " " + channelName + " :You're not channel operator\r\n");
+		client.addToSendBuffer(std::string(ERR_CHANOPRIVSNEEDED) + " " + client.getNickname() + " " + channelName + " :You're not channel operator");
 		return;
 	}
 	channel->setTopic(args[2]);

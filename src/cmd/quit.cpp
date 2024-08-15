@@ -40,7 +40,7 @@ void Command::quit(Client &client, std::vector<std::string> args) {
 	}
 	
 	// quit 사용자에게 메세지 보내기
-	client.addToSendBuffer("ERROR :Closing link: (" + client.getHostname() + "@" + client.getServername() + ") [Quit: " + msg + "]\r\n");
+	client.addToSendBuffer("ERROR :Closing link: (" + client.getHostname() + "@" + client.getServername() + ") [Quit: " + msg + "]");
 	
 	// 클라이언트 연결 종료
 	server_.removeClient(client.getFd());
