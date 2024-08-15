@@ -13,6 +13,10 @@ void Command::mode(Client &client, std::vector<std::string> args) {
 	std::string target = args[1];
 	bool isProcessed = false;
 
+	if (target[0] == '#' && args.size() > 2 && args[2] == "b") {
+        return;
+    }
+
 	// 사용자 모드 설정
 	if (target[0] != '#') {
 		if (args.size() < 3) {
