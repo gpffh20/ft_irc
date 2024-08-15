@@ -201,27 +201,28 @@ void Server::handleClientMessages(int client_fd) {
 	
 	char buffer[1024];
 	int nbytes;
+	static std::string tmp;
 	std::string command;
 	
-	while ((nbytes = read(client_fd, buffer, sizeof(buffer))) > 0 ) {
-		command.append(buffer, nbytes);
+	while ((nbytes = read(client_fd, buffer, sizeof(buffer))) > 0) {
+		tmp.append(buffer, nbytes);
 		
-		if (command.find("\r\n") != std::string::npos) {
+		if (tmp.find("\r\n") != std::string::npos) {
 			break;
 		}
 	}
 	
-//	std::cout << "buffer: " << buffer << std::endl;
-//	std::cout << "nbytes: " << nbytes << std::endl;
+	command = tmp;
 	
 	if (nbytes > 0) {
+		tmp.clear();
 		// 데이터를 정상적으로 읽었을 때 처리
-		if (std::string(buffer, nbytes).find("CAP LS") != std::string::npos) {
+		if (command.find("CAP LS") != std::string::npos) {
 			removeClient(client_fd);
 			return;
 		}
 		try {
-			client.setMessage(std::string(buffer, nbytes));
+			client.setMessage(command);
 			handleCommands(client);
 		} catch (const std::exception &e) {
 			std::cerr << "Error handling command: " << e.what() << std::endl;
