@@ -115,10 +115,6 @@ std::vector<Channel *> Client::getChannels() {
 	return channels;
 }
 
-void Client::removeChannel(Channel *channel) {
-	channels.erase(std::remove(channels.begin(), channels.end(), channel), channels.end());
-}
-
 void Client::setEnd(bool end) {
 	end_ = end;
 }

@@ -61,8 +61,6 @@ class Client {
 	
 	// channel
 	void addChannel(Channel* channel);
-	void removeChannel(Channel* channel);
-	
   
   private:
 	Message message_;

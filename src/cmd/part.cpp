@@ -77,7 +77,6 @@ void Command::part(Client &client, std::vector<std::string> args) {
 		
 		client.addToSendBuffer(partMessage);
 		it->second.removeClient(client);
-		client.removeChannel(&it->second);
 		
 		// 채널이 비었는지 검사 후 삭제
 		if (it->second.getClientList().empty()) {

@@ -34,11 +34,7 @@ void Command::quit(Client &client, std::vector<std::string> args) {
 		// 채널에서 나간 클라이언트 삭제
 		(*it)->removeClient(client);
 		// 아무도 없는 채널 삭제
-		if ((*it)->getClientList().empty()) {
-		}			server_.removeChannel((*it)->getChannelName());
-
 	}
-	
 	// quit 사용자에게 메세지 보내기
 	client.addToSendBuffer("ERROR :Closing link: (" + client.getHostname() + "@" + client.getServername() + ") [Quit: " + msg + "]");
 	

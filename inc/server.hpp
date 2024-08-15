@@ -41,7 +41,6 @@ public:
   void          addNickname(const std::string &nickname);
   void          sendToClient(int client_fd, const std::string& message);
   void          removeNickname(const std::string &nickname);
-  void	     	removeChannel(const std::string &channel_name);
   void			addChannel(const Channel &channel);
   void      removeDisconnectedClientsFromChannels(int client_fd);
   

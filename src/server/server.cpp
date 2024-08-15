@@ -34,7 +34,6 @@ Server::~Server() {
 
 void Server::run() {
 	while (true) {
-		std::cout << "fd_count: " << fd_count << std::endl;
 		// event_count
 		int poll_count = poll(fds, fd_count, -1); // 무한 대기 상태로 폴링
 		if (poll_count == -1) {
@@ -178,9 +177,6 @@ void Server::removeDisconnectedClientsFromChannels(int client_fd) {
 	std::vector<Channel *> channels = client.getChannels();
 	for (std::vector<Channel *>::iterator it = channels.begin(); it != channels.end(); ++it) {
 		(*it)->removeClient(client);
-		if ((*it)->getClientList().empty()) {
-			removeChannel((*it)->getChannelName());
-		}
 	}
 }
 
@@ -296,8 +292,4 @@ void Server::sendToClients() {
 
 void Server::addChannel(const Channel &channel) {
 	channels.insert(std::make_pair(channel.getChannelName(), channel));
-}
-
-void Server::removeChannel(const std::string &channel_name) {
-	channels.erase(channel_name);
 }

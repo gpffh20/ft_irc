@@ -89,8 +89,4 @@ void Command::kick(Client &client, std::vector<std::string> args) {
 	
 	// 채널에서 client 제거
 	channel->removeClient(*target);
-	
-	// client의 채널 목록에서 채널 제거
-	target->removeChannel(channel);
-	
 }
