@@ -3,19 +3,6 @@
 #include "../../inc/client.hpp"
 #include "../../inc/channel.hpp"
 
-unsigned long stringToULong(const std::string& str) {
-    std::stringstream ss(str);
-    unsigned long result;
-    ss >> result;
-    return result;
-}
-
-std::string toString(unsigned long num) {
-    std::stringstream ss;
-    ss << num;
-    return ss.str();
-}
-
 // 채널 모드를 처리하는 함수
 void Command::mode(Client &client, std::vector<std::string> args) {
 	if (args.size() < 2) {
@@ -26,6 +13,10 @@ void Command::mode(Client &client, std::vector<std::string> args) {
 	std::string target = args[1];
 	bool isProcessed = false;
 
+	// mode b 커맨드 무시
+	if (target[0] == '#' && args.size() > 2 && args[2] == "b") {
+        return;
+    }
 	// 사용자 모드 설정
 	if (target[0] != '#') {
 		if (args.size() < 3) {
@@ -134,10 +125,10 @@ bool Command::processMode(Client &client, Channel &channel, char mode, char sign
 		case 'l':
 			if (isAdd) {
 				if (!param.empty()) {
-					unsigned long limit = stringToULong(param);
+					unsigned long limit = std::stoi(param);
 					// 현재 채널의 클라이언트 수와 비교
 					if (limit < channel.getClientList().size()) {
-						client.addToSendBuffer("478 " + client.getNickname() + " " + toString(limit) + " :Cannot set limit below current client count");
+						client.addToSendBuffer("478 " + client.getNickname() + " " + std::to_string(limit) + " :Cannot set limit below current client count");
 						return false;
 					}
 					if (limit > 0) {
