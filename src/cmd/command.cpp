@@ -83,3 +83,11 @@ Channel* Command::getChannelByName(std::string channelName) {
 	}
 	return &it->second;
 }
+
+Client* Command::getClientByFd(int fd) {
+	std::map<int, Client>::iterator it = server_.getClients().find(fd);
+	if (it == server_.getClients().end()) {
+		return NULL;
+	}
+	return &it->second;
+}

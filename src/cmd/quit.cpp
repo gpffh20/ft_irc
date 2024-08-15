@@ -35,8 +35,8 @@ void Command::quit(Client &client, std::vector<std::string> args) {
 		(*it)->removeClient(client);
 		// 아무도 없는 채널 삭제
 		if ((*it)->getClientList().empty()) {
-			server_.removeChannel((*it)->getChannelName());
-		}
+		}			server_.removeChannel((*it)->getChannelName());
+
 	}
 	
 	// quit 사용자에게 메세지 보내기
