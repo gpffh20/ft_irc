@@ -77,7 +77,9 @@ void Command::join(Client &client, std::vector<std::string> args) {
 					+ channelName;
 	for (std::vector<Client *>::iterator it = clientList.begin(); it != clientList.end(); ++it) {
 		if ((*it)->getNickname() != client.getNickname()) {
+			if (Server::getClients().find((*it)->getFd()) != Server::getClients().end()) {
 			(*it)->addToSendBuffer(joinMessage);
+			}
 		}
 	}
 }

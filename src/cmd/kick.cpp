@@ -81,7 +81,9 @@ void Command::kick(Client &client, std::vector<std::string> args) {
 			msg = ":" + client.getNickname() + " KICK " + channelName + " " + targetNickname + " :" + reason;
 	for (std::vector<Client *>::iterator it = clientList.begin(); it != clientList.end(); ++it) {
 		if ((*it)->getNickname() != client.getNickname()) {
+			if (Server::getClients().find((*it)->getFd()) != Server::getClients().end()) {
 			(*it)->addToSendBuffer(msg);
+			}
 		}
 	}
 	
